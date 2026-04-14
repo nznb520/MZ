@@ -49,13 +49,13 @@ ddnsfbfwewefe.BorderSizePixel = 0
 ddnsfbfwewefe.Position = UDim2.new(-0.000210968778, 0, -0.00395679474, 0)
 ddnsfbfwewefe.Size = UDim2.new(0, 237, 0, 27)
 ddnsfbfwewefe.Font = Enum.Font.SourceSans
-ddnsfbfwewefe.Text = "Script made by WarriorRoberr"
+ddnsfbfwewefe.Text = "脚本作者:南烛"
 ddnsfbfwewefe.TextColor3 = Color3.fromRGB(255, 255, 255)
 ddnsfbfwewefe.TextScaled = true
 ddnsfbfwewefe.TextSize = 14.000
 ddnsfbfwewefe.TextWrapped = true
 
-Speed.Name = "Speed"
+Speed.Name = "速度"
 Speed.Parent = FlyFrame
 Speed.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
 Speed.BorderColor3 = Color3.fromRGB(0, 0, 191)
@@ -77,7 +77,7 @@ Fly.BorderSizePixel = 0
 Fly.Position = UDim2.new(0.0759493634, 0, 0.705797076, 0)
 Fly.Size = UDim2.new(0, 199, 0, 32)
 Fly.Font = Enum.Font.SourceSans
-Fly.Text = "Enable"
+Fly.Text = "开始"
 Fly.TextColor3 = Color3.fromRGB(255, 255, 255)
 Fly.TextScaled = true
 Fly.TextSize = 14.000
@@ -100,7 +100,7 @@ Fly.MouseButton1Click:Connect(function()
 	end)
 end)
 
-Speeed.Name = "Speeed"
+Speeed.Name = "速度"
 Speeed.Parent = FlyFrame
 Speeed.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 Speeed.BorderSizePixel = 0
@@ -108,20 +108,20 @@ Speeed.Position = UDim2.new(0.0759493634, 0, 0.402877688, 0)
 Speeed.Size = UDim2.new(0, 87, 0, 32)
 Speeed.ZIndex = 0
 Speeed.Font = Enum.Font.SourceSans
-Speeed.Text = "Speed:"
+Speeed.Text = "速度:"
 Speeed.TextColor3 = Color3.fromRGB(255, 255, 255)
 Speeed.TextScaled = true
 Speeed.TextSize = 14.000
 Speeed.TextWrapped = true
 
-Stat.Name = "Stat"
+Stat.Name = "状态"
 Stat.Parent = FlyFrame
 Stat.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 Stat.BorderSizePixel = 0
 Stat.Position = UDim2.new(0.299983799, 0, 0.239817441, 0)
 Stat.Size = UDim2.new(0, 85, 0, 15)
 Stat.Font = Enum.Font.SourceSans
-Stat.Text = "Status:"
+Stat.Text = "状态:"
 Stat.TextColor3 = Color3.fromRGB(255, 255, 255)
 Stat.TextScaled = true
 Stat.TextSize = 14.000
@@ -148,7 +148,7 @@ Unfly.Position = UDim2.new(0.0759493634, 0, 0.705797076, 0)
 Unfly.Size = UDim2.new(0, 199, 0, 32)
 Unfly.Visible = false
 Unfly.Font = Enum.Font.SourceSans
-Unfly.Text = "Disable"
+Unfly.Text = "关闭"
 Unfly.TextColor3 = Color3.fromRGB(255, 255, 255)
 Unfly.TextScaled = true
 Unfly.TextSize = 14.000
@@ -165,13 +165,13 @@ Unfly.MouseButton1Click:Connect(function()
 	HumanoidRP:FindFirstChildOfClass("BodyGyro"):Destroy()
 end)
 
-Vfly.Name = "Vfly"
+Vfly.Name = "MZ脚本中心"
 Vfly.Parent = Drag
 Vfly.BackgroundColor3 = Color3.fromRGB(0, 150, 191)
 Vfly.BorderSizePixel = 0
 Vfly.Size = UDim2.new(0, 57, 0, 27)
 Vfly.Font = Enum.Font.SourceSans
-Vfly.Text = "VFly"
+Vfly.Text = "MZ脚本中心"
 Vfly.TextColor3 = Color3.fromRGB(255, 255, 255)
 Vfly.TextScaled = true
 Vfly.TextSize = 14.000

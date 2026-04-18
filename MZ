@@ -40,27 +40,67 @@ WindUI:Popup({
 })
 repeat wait() until Confirmed
 
+-- 获取玩家信息
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- 获取玩家头像
+local playerAvatarUrl = ""
+local success, result = pcall(function()
+    local response = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=150x150&format=Png&isCircular=true", LocalPlayer.UserId))
+    if response then
+        local data = HttpService:JSONDecode(response)
+        if data and data.data and data.data[1] then
+            playerAvatarUrl = data.data[1].imageUrl
+        end
+    end
+end)
+
+if not success or playerAvatarUrl == "" then
+    playerAvatarUrl = "rbxassetid://129260712070622" -- 默认图标
+end
+
 -- 创建WindUI主窗口
 local Window = WindUI:CreateWindow({
     Title = "MZ脚本中心",
-    Icon = "rbxassetid://129260712070622",
+    Icon = playerAvatarUrl, -- 使用玩家头像
     IconThemed = true,
-    Author = "MZ脚本中心 作者:南烛",
+    Author = LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")", -- 显示玩家昵称和用户名
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
     Theme = "Dark",
     User = {
         Enabled = true,
-        Anonymous = true,
+        Anonymous = false, -- 显示真实用户信息
+        Callback = function() 
+            print("点击了用户区域")
+        end
     },
     SideBarWidth = 200,
     ScrollBarEnabled = true,
 })
 
+-- 添加标签
+Window:Tag({
+    Title = "MZ脚本中心",
+    Color = Color3.fromHex("00ffff") 
+})
+
+Window:Tag({
+    Title = "V2专属版",
+    Color = Color3.fromHex("FFFF00") -- 黄色
+})
+
+Window:Tag({
+    Title = "欢迎使用",
+    Color = Color3.fromHex("00FF00") -- 绿色
+})
+
 -- 编辑呼出按钮
 Window:EditOpenButton({
-    Title = "打开〖MZ脚本中心〗",
+    Title = "Open MZ脚本中心",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,

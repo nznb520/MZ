@@ -45,7 +45,7 @@ local Window = WindUI:CreateWindow({
     Title = "MZ脚本中心",
     Icon = "rbxassetid://129260712070622",
     IconThemed = true,
-    Author = "MZ脚本中心 Premium",
+    Author = "MZ脚本中心 作者:南烛",
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
@@ -60,7 +60,7 @@ local Window = WindUI:CreateWindow({
 
 -- 编辑呼出按钮
 Window:EditOpenButton({
-    Title = "Open MZ脚本中心",
+    Title = "打开〖MZ脚本中心〗",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,

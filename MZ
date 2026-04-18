@@ -1,5 +1,3 @@
--- 迪奥呀汉化
--- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 -- 定义渐变文字生成函数

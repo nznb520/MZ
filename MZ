@@ -98,9 +98,14 @@ Window:Tag({
     Color = Color3.fromHex("00FF00") -- 绿色
 })
 
+Window:Tag({
+    Title = "尊敬的〖竹影清风〗&〖墨龙‖凌霄〗团员＆团长＆副团长",
+    Color = Color3.fromHex("FFFFFF") -- 白色
+})
+
 -- 编辑呼出按钮
 Window:EditOpenButton({
-    Title = "Open MZ脚本中心",
+    Title = "打开〖MZ脚本中心〗",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
@@ -350,6 +355,80 @@ Tabs.GeneralTab:Button({
     end
 })
 
+Tabs.GeneralTab:Divider()
+
+-- 玩家进出通知开关
+local playerNotifyEnabled = false
+local PlayerJoinLeaveConnections = {}
+
+Tabs.GeneralTab:Toggle({
+    Title = "玩家进入时通知",
+    Desc = "监听玩家进入和离开，显示通知",
+    Value = false,
+    Callback = function(state)
+        playerNotifyEnabled = state
+        
+        if state then
+            -- 启动监听
+            local function OnPlayerAdded(player)
+                WindUI:Notify({
+                    Title = "玩家进入",
+                    Content = player.Name .. " 进入了服务器",
+                    Duration = 5,
+                    Icon = "user-plus"
+                })
+            end
+            
+            local function OnPlayerRemoving(player)
+                WindUI:Notify({
+                    Title = "玩家离开",
+                    Content = player.Name .. " 离开了服务器",
+                    Duration = 5,
+                    Icon = "user-minus"
+                })
+            end
+            
+            -- 监听玩家加入
+            local playerAddedConnection = Players.PlayerAdded:Connect(OnPlayerAdded)
+            PlayerJoinLeaveConnections["PlayerAdded"] = playerAddedConnection
+            
+            -- 监听玩家离开
+            local playerRemovingConnection = Players.PlayerRemoving:Connect(OnPlayerRemoving)
+            PlayerJoinLeaveConnections["PlayerRemoving"] = playerRemovingConnection
+            
+            -- 为已存在的玩家发送通知（可选）
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    WindUI:Notify({
+                        Title = "玩家已存在",
+                        Content = player.Name .. " 已在服务器中",
+                        Duration = 3,
+                        Icon = "user"
+                    })
+                end
+            end
+        else
+            -- 停止监听
+            for name, connection in pairs(PlayerJoinLeaveConnections) do
+                if connection then
+                    connection:Disconnect()
+                end
+            end
+            PlayerJoinLeaveConnections = {}
+        end
+    end
+})
+
+-- ========== 开发工具选项卡内容 ==========
+-- 汉化版Dex按钮
+Tabs.DevToolsTab:Button({
+    Title = "汉化版Dex",
+    Desc = "点击加载汉化版Dex脚本",
+    Callback = function()
+    loadstring(game:HttpGet("https://gitee.com/cmbhbh/cmbh/raw/master/Bex.lua"))()
+    end
+})
+
 -- ========== 开发人员选项卡内容 ==========
 Tabs.DevsTab:Paragraph({
     Title = "脚本作者:南烛",
@@ -399,6 +478,7 @@ Tabs.DevsTab:Paragraph({
 -- ========== ESP透视选项卡内容 ==========
 local ESPEnabled = false
 local ESPHighlights = {}
+local ESPConnections = {} -- 用于存储连接
 
 Tabs.ESPTab:Toggle({
     Title = "透视玩家",
@@ -408,8 +488,16 @@ Tabs.ESPTab:Toggle({
         ESPEnabled = state
         
         if state then
-            -- 创建透视效果
-            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            -- 清除旧的连接
+            for _, connection in pairs(ESPConnections) do
+                if connection then
+                    connection:Disconnect()
+                end
+            end
+            ESPConnections = {}
+            
+            -- 为现有玩家创建高亮
+            local function AddHighlightToPlayer(player)
                 if player ~= game.Players.LocalPlayer and player.Character then
                     local highlight = Instance.new("Highlight")
                     highlight.FillColor = Color3.fromRGB(255, 255, 255)
@@ -421,9 +509,13 @@ Tabs.ESPTab:Toggle({
                 end
             end
             
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                AddHighlightToPlayer(player)
+            end
+            
             -- 监听新玩家加入
-            game:GetService("Players").PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function(character)
+            local playerAddedConnection = game:GetService("Players").PlayerAdded:Connect(function(player)
+                local characterAddedConnection = player.CharacterAdded:Connect(function(character)
                     if ESPEnabled then
                         wait(1) -- 等待角色加载
                         local highlight = Instance.new("Highlight")
@@ -435,23 +527,193 @@ Tabs.ESPTab:Toggle({
                         ESPHighlights[player] = highlight
                     end
                 end)
+                
+                ESPConnections[player] = characterAddedConnection
             end)
             
+            ESPConnections["PlayerAdded"] = playerAddedConnection
+            
             -- 监听玩家离开
-            game:GetService("Players").PlayerRemoving:Connect(function(player)
+            local playerRemovingConnection = game:GetService("Players").PlayerRemoving:Connect(function(player)
                 if ESPHighlights[player] then
                     ESPHighlights[player]:Destroy()
                     ESPHighlights[player] = nil
                 end
+                
+                if ESPConnections[player] then
+                    ESPConnections[player]:Disconnect()
+                    ESPConnections[player] = nil
+                end
             end)
+            
+            ESPConnections["PlayerRemoving"] = playerRemovingConnection
         else
-            -- 移除所有透视效果
+            -- 移除所有高亮效果
             for _, highlight in pairs(ESPHighlights) do
                 if highlight then
                     highlight:Destroy()
                 end
             end
             ESPHighlights = {}
+            
+            -- 清除所有连接
+            for _, connection in pairs(ESPConnections) do
+                if connection then
+                    connection:Disconnect()
+                end
+            end
+            ESPConnections = {}
+        end
+    end
+})
+
+Tabs.ESPTab:Divider()
+
+-- 绘制射线功能
+local RayDrawingEnabled = false
+local RayLines = {} -- 存储射线对象
+local RayConnections = {} -- 用于存储射线相关的连接
+
+-- 获取屏幕尺寸
+local function GetScreenSize()
+    return workspace.CurrentCamera.ViewportSize
+end
+
+-- 创建射线绘制
+local function CreateRayDrawing(player, character)
+    if not character or not character.Parent then return end
+    
+    local screenSize = GetScreenSize()
+    local startY = screenSize.Y / 2 -- 固定为屏幕中心
+    
+    -- 创建射线
+    local line = Drawing.new("Line")
+    line.Thickness = 2
+    line.Color = Color3.fromRGB(255, 255, 255) -- 白色
+    line.From = Vector2.new(screenSize.X / 2, startY)
+    
+    RayLines[player] = line
+    
+    -- 更新射线位置的函数
+    local function UpdateRay()
+        if not RayDrawingEnabled or not character or not character.Parent then
+            if RayLines[player] then
+                RayLines[player]:Remove()
+                RayLines[player] = nil
+            end
+            return
+        end
+        
+        -- 获取玩家身体部位
+        local torso = character:FindFirstChild("UpperTorso") or 
+                     character:FindFirstChild("HumanoidRootPart") or
+                     character:FindFirstChild("Torso")
+        
+        if torso then
+            -- 将3D位置转换为2D屏幕位置
+            local camera = workspace.CurrentCamera
+            local torsoPosition = torso.Position
+            local torsoScreenPos, torsoVisible = camera:WorldToViewportPoint(torsoPosition)
+            
+            if torsoVisible then
+                local screenPos = Vector2.new(torsoScreenPos.X, torsoScreenPos.Y)
+                local line = RayLines[player]
+                if line then
+                    line.From = Vector2.new(screenSize.X / 2, screenSize.Y / 2) -- 固定起点为屏幕中心
+                    line.To = screenPos
+                    line.Visible = true
+                end
+            else
+                -- 如果玩家不在屏幕内，隐藏射线
+                if RayLines[player] then
+                    RayLines[player].Visible = false
+                end
+            end
+        end
+    end
+    
+    -- 创建每帧更新的连接
+    local renderConnection = game:GetService("RunService").RenderStepped:Connect(UpdateRay)
+    RayConnections[player] = renderConnection
+end
+
+-- 为所有玩家创建射线
+local function CreateRaysForAllPlayers()
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            CreateRayDrawing(player, player.Character)
+        end
+    end
+end
+
+-- 清除所有射线
+local function ClearAllRays()
+    for player, line in pairs(RayLines) do
+        if line then
+            line:Remove()
+        end
+    end
+    RayLines = {}
+    
+    for player, connection in pairs(RayConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    RayConnections = {}
+end
+
+-- 开启绘制射线开关
+local RayToggle = Tabs.ESPTab:Toggle({
+    Title = "开启绘制射线",
+    Desc = "为所有玩家绘制指向身体的射线（固定从屏幕中心开始）",
+    Value = false,
+    Callback = function(state)
+        RayDrawingEnabled = state
+        
+        if state then
+            -- 清除旧的连接
+            for _, connection in pairs(RayConnections) do
+                if connection then
+                    connection:Disconnect()
+                end
+            end
+            RayConnections = {}
+            
+            -- 为已有玩家创建射线
+            CreateRaysForAllPlayers()
+            
+            -- 监听新玩家加入
+            local playerAddedConnection = game:GetService("Players").PlayerAdded:Connect(function(player)
+                local characterAddedConnection = player.CharacterAdded:Connect(function(character)
+                    wait(1) -- 等待角色加载
+                    if RayDrawingEnabled then
+                        CreateRayDrawing(player, character)
+                    end
+                end)
+                
+                RayConnections[player] = characterAddedConnection
+            end)
+            
+            RayConnections["PlayerAdded"] = playerAddedConnection
+            
+            -- 监听玩家离开
+            local playerRemovingConnection = game:GetService("Players").PlayerRemoving:Connect(function(player)
+                if RayLines[player] then
+                    RayLines[player]:Remove()
+                    RayLines[player] = nil
+                end
+                
+                if RayConnections[player] then
+                    RayConnections[player]:Disconnect()
+                    RayConnections[player] = nil
+                end
+            end)
+            
+            RayConnections["PlayerRemoving"] = playerRemovingConnection
+        else
+            -- 关闭时清除所有射线
+            ClearAllRays()
         end
     end
 })
@@ -744,4 +1006,36 @@ Tabs.UISettingsTab:Button({
 -- 窗口关闭回调
 Window:OnClose(function()
     print("UI已关闭")
+    
+    -- 清理射线对象
+    for _, line in pairs(RayLines) do
+        if line then
+            line:Remove()
+        end
+    end
+    RayLines = {}
+    
+    -- 清理射线连接
+    for _, connection in pairs(RayConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    RayConnections = {}
+    
+    -- 清理ESP连接
+    for _, connection in pairs(ESPConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    ESPConnections = {}
+    
+    -- 清理玩家通知连接
+    for _, connection in pairs(PlayerJoinLeaveConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    PlayerJoinLeaveConnections = {}
 end)

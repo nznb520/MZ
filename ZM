@@ -21,7 +21,7 @@ end
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
-    Icon = "rbxassetid://129260712070622",
+    Icon = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg",
     IconThemed = true,
     Content = "欢迎使用MZ脚本中心 " .. gradient("WindUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Library",
     Buttons = {
@@ -105,7 +105,7 @@ Window:Tag({
 
 -- 编辑呼出按钮
 Window:EditOpenButton({
-    Title = "Open MZ脚本中心",
+    Title = "打开〖MZ脚本中心〗",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
@@ -425,7 +425,7 @@ Tabs.DevToolsTab:Button({
     Title = "汉化版Dex",
     Desc = "点击加载汉化版Dex脚本",
     Callback = function()
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/4fe525637e43a1be8cb0cdf902d107c2.lua"))()
+    loadstring(game:HttpGet("https://gitee.com/cmbhbh/cmbh/raw/master/Bex.lua"))()
     end
 })
 

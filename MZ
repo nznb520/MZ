@@ -1,3 +1,5 @@
+-- 迪奥呀汉化
+-- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 -- 定义渐变文字生成函数
@@ -19,7 +21,7 @@ end
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
-    Icon = "rbxassetid://129260712070622",
+    Icon = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg",
     IconThemed = true,
     Content = "欢迎使用MZ脚本中心 " .. gradient("WindUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Library",
     Buttons = {
@@ -68,7 +70,7 @@ local Window = WindUI:CreateWindow({
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
-    Theme = "Dark",
+    Theme = "Light",
     User = {
         Enabled = true,
         Anonymous = false, -- 显示真实用户信息
@@ -97,7 +99,7 @@ Window:Tag({
 })
 
 Window:Tag({
-    Title = "尊敬的〖竹影清风〗&〖墨龙‖凌霄〗团员＆团长＆副团长",
+    Title = "尊敬的〖竹影清风〗&〖墨龙‖凌霄〗团员＆团长＆副团长 您好",
     Color = Color3.fromHex("FFFFFF") -- 白色
 })
 
@@ -187,7 +189,7 @@ Tabs.InfoTab:Paragraph({
     Desc = "规则：（活动时间：出手游的第6周）\n注意：参赛人员必须是远古龙！并且拉复活的钱双方共出，并且打架期间不能使用技能只能使用普通的咬\n\n1.双方各出一个人与对方单挑活着则赢死者则输（切记友谊第1比赛第2！）\n2.所有普通成员打完之后便会有各个分队的队长继续训练（跟第1条一样）\n3.最后由各个团的副团长和团长相互配合攻打对方的团长和副团长（赢的军团将会获得6666龙币）",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/5gq5qQBT/Image-1776485613816-44.jpg",
+    Thumbnail = "https://i.ibb.co/Hw908R6/Image-1776485613816-44.jpg",
     ThumbnailSize = 120,
 })
 
@@ -423,7 +425,7 @@ Tabs.DevToolsTab:Button({
     Title = "汉化版Dex",
     Desc = "点击加载汉化版Dex脚本",
     Callback = function()
-    loadstring(game:HttpGet("https://gitee.com/cmbhbh/cmbh/raw/master/Bex.lua"))()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/4fe525637e43a1be8cb0cdf902d107c2.lua"))()
     end
 })
 
@@ -717,6 +719,17 @@ local RayToggle = Tabs.ESPTab:Toggle({
 })
 
 -- ========== 选择服务器选项卡内容 ==========
+-- 添加说明段落
+Tabs.ServerSelectTab:Paragraph({
+    Title = "注意",
+    Desc = "因为本脚本原名叫Atrumix 所以执行的脚本名字就叫这个本人懒得改 所以就这样吧 请见谅٩(๑ᵒ̴̶̷͈᷄ᗨᵒ̴̶̷͈᷅)و",
+    Image = "https://i.ibb.co/PzTHmCvQ/Image-1776562211409-159.jpg",
+    ImageSize = 42,
+    ThumbnailSize = 120,
+})
+
+Tabs.ServerSelectTab:Divider()
+
 -- 游戏ID与脚本映射配置
 local GameScripts = {
     [10253248401] = {"元素力量大亨", "https://raw.githubusercontent.com/nznb520/Atrumix/042524fac05940b1b1a9389a0bbb9572441b1bc3/%E5%85%83%E7%B4%A0%E5%8A%9B%E9%87%8F%E5%A4%A7%E4%BA%A8"},

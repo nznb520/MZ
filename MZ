@@ -1,6 +1,6 @@
 -- 迪奥呀汉化
 -- 主群获取更多T^T1070748130
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local WindUI = loadstring(game:HttpGet(""))()
 
 -- 定义渐变文字生成函数
 function gradient(text, startColor, endColor)
@@ -21,7 +21,7 @@ end
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
-    Icon = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg",
+    Icon = "https:///1YtNJxGL/Image-1776560526876-770.jpg",
     IconThemed = true,
     Content = "欢迎使用MZ脚本中心 " .. gradient("WindUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Library",
     Buttons = {
@@ -48,7 +48,7 @@ local HttpService = game:GetService("HttpService")
 -- 获取玩家头像
 local playerAvatarUrl = ""
 local success, result = pcall(function()
-    local response = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=150x150&format=Png&isCircular=true", LocalPlayer.UserId))
+    local response = game:HttpGet(string.format("", LocalPlayer.UserId))
     if response then
         local data = HttpService:JSONDecode(response)
         if data and data.data and data.data[1] then
@@ -70,7 +70,7 @@ local Window = WindUI:CreateWindow({
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
-    Theme = "Light",
+    Theme = "Light", -- 修改这里：从Dark改为Light
     User = {
         Enabled = true,
         Anonymous = false, -- 显示真实用户信息
@@ -167,7 +167,7 @@ Tabs.InfoTab:Paragraph({
     Desc = "祝您游玩愉快",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/5hfcs9hk/9b4d562261482726fa2847b6a5f44950fb770e9162156180ffb0461ef328abdf.webp",
+    Thumbnail = "https:///5hfcs9hk/9b4d562261482726fa2847b6a5f44950fb770e9162156180ffb0461ef328abdf.webp",
     ThumbnailSize = 120,
 })
 
@@ -178,7 +178,7 @@ Tabs.InfoTab:Paragraph({
     Desc = "规则：（活动时间：出手游的第6周）\n注意：参赛人员必须是远古龙！并且拉复活的钱双方共出，并且打架期间不能使用技能只能使用普通的咬\n\n1.双方各出一个人与对方单挑活着则赢死者则输（切记友谊第1比赛第2！）\n2.所有普通成员打完之后便会有各个分队的队长继续训练（跟第1条一样）\n3.最后由各个团的副团长和团长相互配合攻打对方的团长和副团长（赢的军团将会获得6666龙币）",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/4RQp8S5X/Image-1776484102307-954.png",
+    Thumbnail = "https:///4RQp8S5X/Image-1776484102307-954.png",
     ThumbnailSize = 120,
 })
 
@@ -189,7 +189,7 @@ Tabs.InfoTab:Paragraph({
     Desc = "规则：（活动时间：出手游的第6周）\n注意：参赛人员必须是远古龙！并且拉复活的钱双方共出，并且打架期间不能使用技能只能使用普通的咬\n\n1.双方各出一个人与对方单挑活着则赢死者则输（切记友谊第1比赛第2！）\n2.所有普通成员打完之后便会有各个分队的队长继续训练（跟第1条一样）\n3.最后由各个团的副团长和团长相互配合攻打对方的团长和副团长（赢的军团将会获得6666龙币）",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/Hw908R6/Image-1776485613816-44.jpg",
+    Thumbnail = "https:///Hw908R6/Image-1776485613816-44.jpg",
     ThumbnailSize = 120,
 })
 
@@ -342,7 +342,7 @@ Tabs.GeneralTab:Button({
     Title = "飞行",
     Desc = "启用飞行功能",
     Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/nznb520/MZ/refs/heads/main/%E9%A3%9E%E8%A1%8C'))()
+        loadstring(game:HttpGet('https:///nznb520/MZ/refs/heads/main/%E9%A3%9E%E8%A1%8C'))()
     end
 })
 
@@ -351,7 +351,7 @@ Tabs.GeneralTab:Button({
     Title = "飞车",
     Desc = "启用飞车功能",
     Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/nznb520/MZ/refs/heads/main/%E9%A3%9E%E8%BD%A6'))()
+        loadstring(game:HttpGet('https:///nznb520/MZ/refs/heads/main/%E9%A3%9E%E8%BD%A6'))()
     end
 })
 
@@ -425,7 +425,7 @@ Tabs.DevToolsTab:Button({
     Title = "汉化版Dex",
     Desc = "点击加载汉化版Dex脚本",
     Callback = function()
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/4fe525637e43a1be8cb0cdf902d107c2.lua"))()
+        loadstring(game:HttpGet(""))()
     end
 })
 
@@ -435,7 +435,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "脚本主要开发者",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/0Rd4GW6Q/Image-1757732064719.jpg",
+    Thumbnail = "",
     ThumbnailSize = 120,
 })
 
@@ -444,7 +444,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "墨龙凌霄团团长",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/DD5xCGKM/mmexport1776256139344.jpg",
+    Thumbnail = "https:///DD5xCGKM/mmexport1776256139344.jpg",
     ThumbnailSize = 120,
 })
 
@@ -453,7 +453,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "竹影清风团团长",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/99VFWgf6/Image-1776255807986-303.jpg",
+    Thumbnail = "https:///99VFWgf6/Image-1776255807986-303.jpg",
     ThumbnailSize = 120,
 })
 
@@ -462,7 +462,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "脚本代理",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/23v3Ghm1/Image-1776257620546-227.png",
+    Thumbnail = "https:///23v3Ghm1/Image-1776257620546-227.png",
     ThumbnailSize = 120,
 })
 
@@ -471,7 +471,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "脚本代理",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/NgTqH1gS/Image-1776255823756-537.jpg",
+    Thumbnail = "https:///NgTqH1gS/Image-1776255823756-537.jpg",
     ThumbnailSize = 120,
 })
 
@@ -721,9 +721,9 @@ local RayToggle = Tabs.ESPTab:Toggle({
 -- ========== 选择服务器选项卡内容 ==========
 -- 添加说明段落
 Tabs.ServerSelectTab:Paragraph({
-    Title = "注意",
-    Desc = "因为本脚本原名叫Atrumix 所以执行的脚本名字就叫这个本人懒得改 所以就这样吧 请见谅٩(๑ᵒ̴̶̷͈᷄ᗨᵒ̴̶̷͈᷅)و",
-    Image = "https://i.ibb.co/PzTHmCvQ/Image-1776562211409-159.jpg",
+    Title = "温馨提示",
+    Desc = "因为本脚本原名叫Atrumix 所以执行的脚本名字就叫这个本人懒得改 所以就这样吧 请见谅(๑•̀ㅁ•́ฅ)",
+    Image = "https:///PzTHmCvQ/Image-1776562211409-159.jpg",
     ImageSize = 42,
     ThumbnailSize = 120,
 })
@@ -732,14 +732,14 @@ Tabs.ServerSelectTab:Divider()
 
 -- 游戏ID与脚本映射配置
 local GameScripts = {
-    [10253248401] = {"元素力量大亨", "https://raw.githubusercontent.com/nznb520/Atrumix/042524fac05940b1b1a9389a0bbb9572441b1bc3/%E5%85%83%E7%B4%A0%E5%8A%9B%E9%87%8F%E5%A4%A7%E4%BA%A8"},
-    [79546208627805] = {"99夜", "https://raw.githubusercontent.com/nznb520/Atrumix/cca264ca9a72738d7d0f51b3e5bd31a764e9d0ec/99%E5%A4%9C"},
-    [131716211654599] = {"鱼", "https://raw.githubusercontent.com/nznb520/Atrumix/881626be7e7cc72ac677c9cf375f3cb8c794eb55/%E9%B1%BC"},
-    [13772394625] = {"刀刃球", "https://raw.githubusercontent.com/nznb520/Atrumix/b71ce91c007fd0cc5e3866c8c13ef8ee13ac17a9/%E5%88%80%E5%88%83%E7%90%83"},
-    [124977557560410] = {"种植花园", "https://raw.githubusercontent.com/nznb520/Atrumix/045a07f1bbe87ad4d96f2ba8f2ab015db004bf20/%E7%A7%8D%E6%A4%8D%E8%8A%B1%E5%9B%AD"},
-    [7541759836] = {"凹凸世界", "https://raw.githubusercontent.com/nznb520/Atrumix/main/%E5%87%B9%E5%87%B8%E4%B8%96%E7%95%8C.lua"},
-    [3101667897] = {"极速传奇", "https://raw.githubusercontent.com/nznb520/MX-Script-Center/refs/heads/main/%E6%9E%81%E9%80%9F%E4%BC%A0%E5%A5%87"},
-    [1537690962] = {"蜂群模拟器", "https://raw.githubusercontent.com/nznb520/MX-Script-Center/refs/heads/main/%E8%9C%82%E7%BE%A4%E6%A8%A1%E6%8B%9F%E5%99%A8"}
+    [10253248401] = {"元素力量大亨", ""},
+    [79546208627805] = {"99夜", "https:///nznb520/Atrumix/cca264ca9a72738d7d0f51b3e5bd31a764e9d0ec/99%E5%A4%9C"},
+    [131716211654599] = {"鱼", "https:///nznb520/Atrumix/881626be7e7cc72ac677c9cf375f3cb8c794eb55/%E9%B1%BC"},
+    [13772394625] = {"刀刃球", "https:///nznb520/Atrumix/b71ce91c007fd0cc5e3866c8c13ef8ee13ac17a9/%E5%88%80%E5%88%83%E7%90%83"},
+    [124977557560410] = {"种植花园", "https:///nznb520/Atrumix/045a07f1bbe87ad4d96f2ba8f2ab015db004bf20/%E7%A7%8D%E6%A4%8D%E8%8A%B1%E5%9B%AD"},
+    [7541759836] = {"凹凸世界", "https:///nznb520/Atrumix/main/%E5%87%B9%E5%87%B8%E4%B8%96%E7%95%8C.lua"},
+    [3101667897] = {"极速传奇", "https:///nznb520/MX-Script-Center/refs/heads/main/%E6%9E%81%E9%80%9F%E4%BC%A0%E5%A5%87"},
+    [1537690962] = {"蜂群模拟器", "https:///nznb520/MX-Script-Center/refs/heads/main/%E8%9C%82%E7%BE%A4%E6%A8%A1%E6%8B%9F%E5%99%A8"}
 }
 
 -- 自动检测并执行按钮

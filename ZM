@@ -2,7 +2,45 @@
 -- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- 定义渐变文字生成函数
+-- ====== 新增：透明启动画面（逐字显示）======
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "StartupScreen"
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = game.CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.BackgroundTransparency = 1
+frame.Parent = screenGui
+
+local avatar = Instance.new("ImageLabel")
+avatar.Image = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg"
+avatar.Size = UDim2.new(0, 220, 0, 220)
+avatar.Position = UDim2.new(0.5, -110, 0.35, -110)
+avatar.BackgroundTransparency = 1
+avatar.Parent = frame
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(0, 500, 0, 70)
+textLabel.Position = UDim2.new(0.5, -250, 0.65, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = ""
+textLabel.TextColor3 = Color3.fromRGB(0, 128, 255)
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.TextStrokeTransparency = 0
+textLabel.TextStrokeColor3 = Color3.new(1, 1, 1)
+textLabel.Parent = frame
+
+local fullText = "【系统】欢迎使用mz脚本中心"
+for i = 1, #fullText do
+    textLabel.Text = string.sub(fullText, 1, i)
+    task.wait(0.12)
+end
+
+task.wait(5)
+screenGui:Destroy()
+
 function gradient(text, startColor, endColor)
     local result = ""
     local length = #text
@@ -17,7 +55,6 @@ function gradient(text, startColor, endColor)
     return result
 end
 
--- 欢迎弹窗
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
@@ -40,12 +77,10 @@ WindUI:Popup({
 })
 repeat wait() until Confirmed
 
--- 获取玩家信息
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 
--- 获取玩家头像
 local playerAvatarUrl = ""
 local success, result = pcall(function()
     local response = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=150x150&format=Png&isCircular=true", LocalPlayer.UserId))
@@ -58,23 +93,22 @@ local success, result = pcall(function()
 end)
 
 if not success or playerAvatarUrl == "" then
-    playerAvatarUrl = "rbxassetid://129260712070622" -- 默认图标
+    playerAvatarUrl = "rbxassetid://129260712070622"
 end
 
--- 创建WindUI主窗口
 local Window = WindUI:CreateWindow({
     Title = "MZ脚本中心",
-    Icon = playerAvatarUrl, -- 使用玩家头像
+    Icon = playerAvatarUrl,
     IconThemed = true,
-    Author = LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")", -- 显示玩家昵称和用户名
+    Author = LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")",
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
-    Theme = "Light",
+    Theme = "Dark",
     User = {
         Enabled = true,
-        Anonymous = false, -- 显示真实用户信息
-        Callback = function() 
+        Anonymous = false,
+        Callback = function()
             print("点击了用户区域")
         end
     },
@@ -82,74 +116,65 @@ local Window = WindUI:CreateWindow({
     ScrollBarEnabled = true,
 })
 
--- 添加标签
 Window:Tag({
     Title = "MZ脚本中心",
-    Color = Color3.fromHex("00ffff") 
+    Color = Color3.fromHex("00ffff")
 })
 
 Window:Tag({
     Title = "V2专属版",
-    Color = Color3.fromHex("FFFF00") -- 黄色
+    Color = Color3.fromHex("FFFF00")
 })
 
 Window:Tag({
     Title = "欢迎使用",
-    Color = Color3.fromHex("00FF00") -- 绿色
+    Color = Color3.fromHex("00FF00")
 })
 
 Window:Tag({
     Title = "尊敬的〖竹影清风〗&〖墨龙‖凌霄〗团员＆团长＆副团长 您好",
-    Color = Color3.fromHex("FFFFFF") -- 白色
+    Color = Color3.fromHex("FFFFFF")
 })
 
--- 编辑呼出按钮
 Window:EditOpenButton({
     Title = "打开〖MZ脚本中心〗",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
     Color = ColorSequence.new(
-        Color3.fromHex("FF0F7B"), 
+        Color3.fromHex("FF0F7B"),
         Color3.fromHex("F89B29")
     ),
     Draggable = true,
 })
 
--- 创建分区
 local Tabs = {}
 
--- 通用分区（信息选项卡）
 Tabs.UniversalSection = Window:Section({
     Title = "通用",
     Opened = true,
 })
 
--- 开发选项分区（开发工具和开发人员）
 Tabs.DevSection = Window:Section({
     Title = "开发选项",
     Opened = false,
 })
 
--- 大部分服可用分区（通用和ESP透视）
 Tabs.MostGamesSection = Window:Section({
     Title = "大部分服可用",
     Opened = false,
 })
 
--- 服务器功能分区（选择服务器）
 Tabs.ServerSection = Window:Section({
     Title = "服务器功能",
     Opened = true,
 })
 
--- UI库功能分区（UI设置）
 Tabs.UISection = Window:Section({
     Title = "UI库功能",
     Opened = true,
 })
 
--- 创建选项卡
 Tabs.InfoTab = Tabs.UniversalSection:Tab({ Title = "信息", Icon = "info" })
 Tabs.DevToolsTab = Tabs.DevSection:Tab({ Title = "开发工具", Icon = "tool" })
 Tabs.DevsTab = Tabs.DevSection:Tab({ Title = "开发人员", Icon = "users" })
@@ -158,45 +183,8 @@ Tabs.ESPTab = Tabs.MostGamesSection:Tab({ Title = "ESP透视", Icon = "eye" })
 Tabs.ServerSelectTab = Tabs.ServerSection:Tab({ Title = "选择服务器", Icon = "server" })
 Tabs.UISettingsTab = Tabs.UISection:Tab({ Title = "UI设置", Icon = "palette" })
 
--- 设置默认选中的标签页
 Window:SelectTab(1)
 
--- 在UI加载完成后修改窗口背景
--- 由于WindUI库的内部实现，我们需要等待UI完全加载后再尝试修改背景
-task.spawn(function()
-    wait(1) -- 等待UI完全加载
-    
-    -- 查找WindUI窗口的主容器
-    local screenGui = Window:FindFirstAncestorOfClass("ScreenGui")
-    if screenGui then
-        -- 查找主窗口容器
-        local mainContainer = screenGui:FindFirstChild("MainContainer") or 
-                              screenGui:FindFirstChild("MainFrame") or
-                              screenGui:FindFirstChild("Window")
-        
-        if mainContainer then
-            -- 创建背景图片
-            local backgroundImage = Instance.new("ImageLabel")
-            backgroundImage.Name = "WindowBackground"
-            backgroundImage.Image = "https://i.ibb.co/Wv44p2fK/IMG-20260425-093007.png"
-            backgroundImage.BackgroundTransparency = 1
-            backgroundImage.Size = UDim2.new(1, 0, 1, 0)
-            backgroundImage.Position = UDim2.new(0, 0, 0, 0)
-            backgroundImage.ScaleType = Enum.ScaleType.Crop
-            backgroundImage.ZIndex = -1 -- 确保在底部
-            
-            -- 添加模糊效果
-            local blurEffect = Instance.new("BlurEffect")
-            blurEffect.Size = 5
-            blurEffect.Parent = backgroundImage
-            
-            -- 添加到窗口
-            backgroundImage.Parent = mainContainer
-        end
-    end
-end)
-
--- ========== 信息选项卡内容 ==========
 Tabs.InfoTab:Paragraph({
     Title = "欢迎使用MZ脚本中心",
     Desc = "祝您游玩愉快",
@@ -228,7 +216,6 @@ Tabs.InfoTab:Paragraph({
     ThumbnailSize = 120,
 })
 
--- ========== 通用选项卡内容 ==========
 Tabs.GeneralTab:Button({
     Title = "重新加入服务器",
     Desc = "点击重新加入当前游玩的服务器",
@@ -239,7 +226,6 @@ Tabs.GeneralTab:Button({
 
 Tabs.GeneralTab:Divider()
 
--- 玩家速度调节滑块
 Tabs.GeneralTab:Slider({
     Title = "玩家速度",
     Desc = "调整玩家移动速度",
@@ -260,7 +246,6 @@ Tabs.GeneralTab:Slider({
     end
 })
 
--- 玩家跳跃高度调节滑块
 Tabs.GeneralTab:Slider({
     Title = "跳跃高度",
     Desc = "调整玩家跳跃高度",
@@ -281,7 +266,6 @@ Tabs.GeneralTab:Slider({
     end
 })
 
--- 重力调节滑块
 Tabs.GeneralTab:Slider({
     Title = "重力",
     Desc = "调整游戏重力",
@@ -296,7 +280,6 @@ Tabs.GeneralTab:Slider({
     end
 })
 
--- 当前血量调节滑块
 Tabs.GeneralTab:Slider({
     Title = "当前血量",
     Desc = "调整玩家当前血量",
@@ -317,7 +300,6 @@ Tabs.GeneralTab:Slider({
     end
 })
 
--- 血量上限调节滑块
 Tabs.GeneralTab:Slider({
     Title = "血量上限",
     Desc = "调整玩家最大血量",
@@ -340,7 +322,6 @@ Tabs.GeneralTab:Slider({
 
 Tabs.GeneralTab:Divider()
 
--- 地图透视开关
 local isMapTransparent = false
 local originalTransparencies = {}
 
@@ -351,7 +332,6 @@ Tabs.GeneralTab:Toggle({
     Callback = function(state)
         isMapTransparent = state
         if state then
-            -- 保存原始透明度并设置半透明
             for _, part in pairs(workspace:GetDescendants()) do
                 if part:IsA("BasePart") and part.Transparency < 0.5 then
                     originalTransparencies[part] = part.Transparency
@@ -359,7 +339,6 @@ Tabs.GeneralTab:Toggle({
                 end
             end
         else
-            -- 恢复原始透明度
             for part, transparency in pairs(originalTransparencies) do
                 if part and part.Parent then
                     part.Transparency = transparency
@@ -372,7 +351,6 @@ Tabs.GeneralTab:Toggle({
 
 Tabs.GeneralTab:Divider()
 
--- 飞行功能按钮
 Tabs.GeneralTab:Button({
     Title = "飞行",
     Desc = "启用飞行功能",
@@ -381,7 +359,6 @@ Tabs.GeneralTab:Button({
     end
 })
 
--- 飞车功能按钮
 Tabs.GeneralTab:Button({
     Title = "飞车",
     Desc = "启用飞车功能",
@@ -392,7 +369,6 @@ Tabs.GeneralTab:Button({
 
 Tabs.GeneralTab:Divider()
 
--- 玩家进出通知开关
 local playerNotifyEnabled = false
 local PlayerJoinLeaveConnections = {}
 
@@ -404,7 +380,6 @@ Tabs.GeneralTab:Toggle({
         playerNotifyEnabled = state
         
         if state then
-            -- 启动监听
             local function OnPlayerAdded(player)
                 WindUI:Notify({
                     Title = "玩家进入",
@@ -423,15 +398,12 @@ Tabs.GeneralTab:Toggle({
                 })
             end
             
-            -- 监听玩家加入
             local playerAddedConnection = Players.PlayerAdded:Connect(OnPlayerAdded)
             PlayerJoinLeaveConnections["PlayerAdded"] = playerAddedConnection
             
-            -- 监听玩家离开
             local playerRemovingConnection = Players.PlayerRemoving:Connect(OnPlayerRemoving)
             PlayerJoinLeaveConnections["PlayerRemoving"] = playerRemovingConnection
             
-            -- 为已存在的玩家发送通知（可选）
             for _, player in pairs(Players:GetPlayers()) do
                 if player ~= LocalPlayer then
                     WindUI:Notify({
@@ -443,7 +415,6 @@ Tabs.GeneralTab:Toggle({
                 end
             end
         else
-            -- 停止监听
             for name, connection in pairs(PlayerJoinLeaveConnections) do
                 if connection then
                     connection:Disconnect()
@@ -454,8 +425,6 @@ Tabs.GeneralTab:Toggle({
     end
 })
 
--- ========== 开发工具选项卡内容 ==========
--- 汉化版Dex按钮
 Tabs.DevToolsTab:Button({
     Title = "汉化版Dex",
     Desc = "点击加载汉化版Dex脚本",
@@ -464,7 +433,6 @@ Tabs.DevToolsTab:Button({
     end
 })
 
--- ========== 开发人员选项卡内容 ==========
 Tabs.DevsTab:Paragraph({
     Title = "脚本作者:南烛",
     Desc = "脚本主要开发者",
@@ -510,10 +478,9 @@ Tabs.DevsTab:Paragraph({
     ThumbnailSize = 120,
 })
 
--- ========== ESP透视选项卡内容 ==========
 local ESPEnabled = false
 local ESPHighlights = {}
-local ESPConnections = {} -- 用于存储连接
+local ESPConnections = {}
 
 Tabs.ESPTab:Toggle({
     Title = "透视玩家",
@@ -523,7 +490,6 @@ Tabs.ESPTab:Toggle({
         ESPEnabled = state
         
         if state then
-            -- 清除旧的连接
             for _, connection in pairs(ESPConnections) do
                 if connection then
                     connection:Disconnect()
@@ -531,7 +497,6 @@ Tabs.ESPTab:Toggle({
             end
             ESPConnections = {}
             
-            -- 为现有玩家创建高亮
             local function AddHighlightToPlayer(player)
                 if player ~= game.Players.LocalPlayer and player.Character then
                     local highlight = Instance.new("Highlight")
@@ -548,11 +513,10 @@ Tabs.ESPTab:Toggle({
                 AddHighlightToPlayer(player)
             end
             
-            -- 监听新玩家加入
             local playerAddedConnection = game:GetService("Players").PlayerAdded:Connect(function(player)
                 local characterAddedConnection = player.CharacterAdded:Connect(function(character)
                     if ESPEnabled then
-                        wait(1) -- 等待角色加载
+                        wait(1)
                         local highlight = Instance.new("Highlight")
                         highlight.FillColor = Color3.fromRGB(255, 255, 255)
                         highlight.FillTransparency = 0.5
@@ -568,7 +532,6 @@ Tabs.ESPTab:Toggle({
             
             ESPConnections["PlayerAdded"] = playerAddedConnection
             
-            -- 监听玩家离开
             local playerRemovingConnection = game:GetService("Players").PlayerRemoving:Connect(function(player)
                 if ESPHighlights[player] then
                     ESPHighlights[player]:Destroy()
@@ -583,7 +546,6 @@ Tabs.ESPTab:Toggle({
             
             ESPConnections["PlayerRemoving"] = playerRemovingConnection
         else
-            -- 移除所有高亮效果
             for _, highlight in pairs(ESPHighlights) do
                 if highlight then
                     highlight:Destroy()
@@ -591,7 +553,6 @@ Tabs.ESPTab:Toggle({
             end
             ESPHighlights = {}
             
-            -- 清除所有连接
             for _, connection in pairs(ESPConnections) do
                 if connection then
                     connection:Disconnect()
@@ -604,32 +565,27 @@ Tabs.ESPTab:Toggle({
 
 Tabs.ESPTab:Divider()
 
--- 绘制射线功能
 local RayDrawingEnabled = false
-local RayLines = {} -- 存储射线对象
-local RayConnections = {} -- 用于存储射线相关的连接
+local RayLines = {}
+local RayConnections = {}
 
--- 获取屏幕尺寸
 local function GetScreenSize()
     return workspace.CurrentCamera.ViewportSize
 end
 
--- 创建射线绘制
 local function CreateRayDrawing(player, character)
     if not character or not character.Parent then return end
     
     local screenSize = GetScreenSize()
-    local startY = screenSize.Y / 2 -- 固定为屏幕中心
+    local startY = screenSize.Y / 2
     
-    -- 创建射线
     local line = Drawing.new("Line")
     line.Thickness = 2
-    line.Color = Color3.fromRGB(255, 255, 255) -- 白色
+    line.Color = Color3.fromRGB(255, 255, 255)
     line.From = Vector2.new(screenSize.X / 2, startY)
     
     RayLines[player] = line
     
-    -- 更新射线位置的函数
     local function UpdateRay()
         if not RayDrawingEnabled or not character or not character.Parent then
             if RayLines[player] then
@@ -639,13 +595,11 @@ local function CreateRayDrawing(player, character)
             return
         end
         
-        -- 获取玩家身体部位
         local torso = character:FindFirstChild("UpperTorso") or 
                      character:FindFirstChild("HumanoidRootPart") or
                      character:FindFirstChild("Torso")
         
         if torso then
-            -- 将3D位置转换为2D屏幕位置
             local camera = workspace.CurrentCamera
             local torsoPosition = torso.Position
             local torsoScreenPos, torsoVisible = camera:WorldToViewportPoint(torsoPosition)
@@ -654,12 +608,11 @@ local function CreateRayDrawing(player, character)
                 local screenPos = Vector2.new(torsoScreenPos.X, torsoScreenPos.Y)
                 local line = RayLines[player]
                 if line then
-                    line.From = Vector2.new(screenSize.X / 2, screenSize.Y / 2) -- 固定起点为屏幕中心
+                    line.From = Vector2.new(screenSize.X / 2, screenSize.Y / 2)
                     line.To = screenPos
                     line.Visible = true
                 end
             else
-                -- 如果玩家不在屏幕内，隐藏射线
                 if RayLines[player] then
                     RayLines[player].Visible = false
                 end
@@ -667,12 +620,10 @@ local function CreateRayDrawing(player, character)
         end
     end
     
-    -- 创建每帧更新的连接
     local renderConnection = game:GetService("RunService").RenderStepped:Connect(UpdateRay)
     RayConnections[player] = renderConnection
 end
 
--- 为所有玩家创建射线
 local function CreateRaysForAllPlayers()
     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
         if player ~= game.Players.LocalPlayer and player.Character then
@@ -681,7 +632,6 @@ local function CreateRaysForAllPlayers()
     end
 end
 
--- 清除所有射线
 local function ClearAllRays()
     for player, line in pairs(RayLines) do
         if line then
@@ -698,7 +648,6 @@ local function ClearAllRays()
     RayConnections = {}
 end
 
--- 开启绘制射线开关
 local RayToggle = Tabs.ESPTab:Toggle({
     Title = "开启绘制射线",
     Desc = "为所有玩家绘制指向身体的射线（固定从屏幕中心开始）",
@@ -707,7 +656,6 @@ local RayToggle = Tabs.ESPTab:Toggle({
         RayDrawingEnabled = state
         
         if state then
-            -- 清除旧的连接
             for _, connection in pairs(RayConnections) do
                 if connection then
                     connection:Disconnect()
@@ -715,13 +663,11 @@ local RayToggle = Tabs.ESPTab:Toggle({
             end
             RayConnections = {}
             
-            -- 为已有玩家创建射线
             CreateRaysForAllPlayers()
             
-            -- 监听新玩家加入
             local playerAddedConnection = game:GetService("Players").PlayerAdded:Connect(function(player)
                 local characterAddedConnection = player.CharacterAdded:Connect(function(character)
-                    wait(1) -- 等待角色加载
+                    wait(1)
                     if RayDrawingEnabled then
                         CreateRayDrawing(player, character)
                     end
@@ -732,7 +678,6 @@ local RayToggle = Tabs.ESPTab:Toggle({
             
             RayConnections["PlayerAdded"] = playerAddedConnection
             
-            -- 监听玩家离开
             local playerRemovingConnection = game:GetService("Players").PlayerRemoving:Connect(function(player)
                 if RayLines[player] then
                     RayLines[player]:Remove()
@@ -747,14 +692,11 @@ local RayToggle = Tabs.ESPTab:Toggle({
             
             RayConnections["PlayerRemoving"] = playerRemovingConnection
         else
-            -- 关闭时清除所有射线
             ClearAllRays()
         end
     end
 })
 
--- ========== 选择服务器选项卡内容 ==========
--- 添加说明段落
 Tabs.ServerSelectTab:Paragraph({
     Title = "温馨提示",
     Desc = "因为本脚本原名叫Atrumix 所以执行的脚本名字就叫这个本人懒得改 所以就这样吧 请见谅(๑•̀ㅁ•́ฅ)",
@@ -765,7 +707,6 @@ Tabs.ServerSelectTab:Paragraph({
 
 Tabs.ServerSelectTab:Divider()
 
--- 游戏ID与脚本映射配置
 local GameScripts = {
     [10253248401] = {"元素力量大亨", "https://raw.githubusercontent.com/nznb520/Atrumix/042524fac05940b1b1a9389a0bbb9572441b1bc3/%E5%85%83%E7%B4%A0%E5%8A%9B%E9%87%8F%E5%A4%A7%E4%BA%A8"},
     [79546208627805] = {"99夜", "https://raw.githubusercontent.com/nznb520/Atrumix/cca264ca9a72738d7d0f51b3e5bd31a764e9d0ec/99%E5%A4%9C"},
@@ -777,7 +718,6 @@ local GameScripts = {
     [1537690962] = {"蜂群模拟器", "https://raw.githubusercontent.com/nznb520/MX-Script-Center/refs/heads/main/%E8%9C%82%E7%BE%A4%E6%A8%A1%E6%8B%9F%E5%99%A8"}
 }
 
--- 自动检测并执行按钮
 Tabs.ServerSelectTab:Button({
     Title = "自动检测并执行",
     Desc = "检测当前服务器并执行相应脚本",
@@ -805,7 +745,6 @@ Tabs.ServerSelectTab:Button({
 
 Tabs.ServerSelectTab:Divider()
 
--- 为每个游戏创建按钮
 for placeId, gameInfo in pairs(GameScripts) do
     local gameName, scriptUrl = gameInfo[1], gameInfo[2]
     
@@ -824,8 +763,185 @@ for placeId, gameInfo in pairs(GameScripts) do
     })
 end
 
--- ========== UI设置选项卡内容 ==========
--- 配置文件相关工具函数
+-- ==================== 以下为修改后的 UI 设置部分 ====================
+
+-- ====== 新增：轮廓渐变色方案表 ======
+local COLOR_SCHEMES = {
+    ["彩虹颜色"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,    Color3.fromHex("FF0000")),
+            ColorSequenceKeypoint.new(0.125, Color3.fromHex("FF7F00")),
+            ColorSequenceKeypoint.new(0.25,  Color3.fromHex("FFFF00")),
+            ColorSequenceKeypoint.new(0.375, Color3.fromHex("00FF00")),
+            ColorSequenceKeypoint.new(0.5,   Color3.fromHex("0000FF")),
+            ColorSequenceKeypoint.new(0.625, Color3.fromHex("4B0082")),
+            ColorSequenceKeypoint.new(0.75,  Color3.fromHex("9400D3")),
+            ColorSequenceKeypoint.new(0.875, Color3.fromHex("FF1493")),
+            ColorSequenceKeypoint.new(1,     Color3.fromHex("FF69B4"))
+        }),
+        icon = "palette"
+    },
+    ["火焰烈焰"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF4500")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF8C00")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFD700"))
+        }),
+        icon = "flame"
+    },
+    ["海洋波浪"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("006994")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00BFFF")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("7FFFD4"))
+        }),
+        icon = "waves"
+    },
+    ["极光幻彩"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("00FF7F")),
+            ColorSequenceKeypoint.new(0.34, Color3.fromHex("00CED1")),
+            ColorSequenceKeypoint.new(0.67, Color3.fromHex("9370DB")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF69B4"))
+        }),
+        icon = "aurora"
+    },
+    ["霓虹炫光"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF00FF")),
+            ColorSequenceKeypoint.new(0.33, Color3.fromHex("00FFFF")),
+            ColorSequenceKeypoint.new(0.66, Color3.fromHex("FFFF00")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF00FF"))
+        }),
+        icon = "sun"
+    },
+    ["日落余晖"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF6347")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF8C00")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFDAB9"))
+        }),
+        icon = "sunset"
+    },
+    ["薄荷清凉"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("98FB98")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00FA9A")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("3CB371"))
+        }),
+        icon = "leaf"
+    },
+    ["莓果派对"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("DC143C")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF1493")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("DB7093"))
+        }),
+        icon = "heart"
+    },
+    ["柠檬汽水"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFFACD")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FFD700")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFA500"))
+        }),
+        icon = "sun"
+    },
+    ["冰霜寒晶"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("E0FFFF")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("B0E0E6")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("87CEEB"))
+        }),
+        icon = "snowflake"
+    },
+    ["岩浆涌动"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("8B0000")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF4500")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFD700"))
+        }),
+        icon = "fire"
+    },
+    ["星云梦幻"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("191970")),
+            ColorSequenceKeypoint.new(0.33, Color3.fromHex("483D8B")),
+            ColorSequenceKeypoint.new(0.66, Color3.fromHex("7B68EE")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("E6E6FA"))
+        }),
+        icon = "star"
+    },
+    ["糖果缤纷"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFB6C1")),
+            ColorSequenceKeypoint.new(0.25, Color3.fromHex("FFC0CB")),
+            ColorSequenceKeypoint.new(0.5,  Color3.fromHex("FF69B4")),
+            ColorSequenceKeypoint.new(0.75, Color3.fromHex("FF1493")),
+            ColorSequenceKeypoint.new(1,    Color3.fromHex("C71585"))
+        }),
+        icon = "candy"
+    },
+    ["森林秘境"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("228B22")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("32CD32")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("ADFF2F"))
+        }),
+        icon = "tree"
+    },
+    ["薰衣草田"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("E6E6FA")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("DDA0DD")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("BA55D3"))
+        }),
+        icon = "flower"
+    },
+    ["金属质感"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("C0C0C0")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("A9A9A9")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("808080"))
+        }),
+        icon = "box"
+    },
+    ["赛博朋克"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF00FF")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00FFFF")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF1493"))
+        }),
+        icon = "cpu"
+    },
+    ["复古胶片"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("8B4513")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("D2691E")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("F4A460"))
+        }),
+        icon = "camera"
+    },
+    ["粉红泡泡"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFC0CB")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FFB6C1")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF69B4"))
+        }),
+        icon = "heart"
+    },
+    ["黑夜星光"] = {
+        ColorSequence = ColorSequence.new({
+            ColorSequenceKeypoint.new(0,   Color3.fromHex("000033")),
+            ColorSequenceKeypoint.new(0.5, Color3.fromHex("191970")),
+            ColorSequenceKeypoint.new(1,   Color3.fromHex("4169E1"))
+        }),
+        icon = "moon"
+    }
+}
+
+-- ====== 修改 UI 设置部分 ======
+
 local HttpService = game:GetService("HttpService")
 local folderPath = "WindUI"
 makefolder(folderPath)
@@ -855,7 +971,6 @@ local function ListFiles()
     return files
 end
 
--- 主题选择下拉菜单
 local themeValues = {}
 for name, _ in pairs(WindUI:GetThemes()) do
     table.insert(themeValues, name)
@@ -872,7 +987,6 @@ local themeDropdown = Tabs.UISettingsTab:Dropdown({
 })
 themeDropdown:Select(WindUI:GetCurrentTheme())
 
--- 窗口透明度开关
 local ToggleTransparency = Tabs.UISettingsTab:Toggle({
     Title = "切换窗口透明度",
     Callback = function(e)
@@ -883,7 +997,6 @@ local ToggleTransparency = Tabs.UISettingsTab:Toggle({
 
 Tabs.UISettingsTab:Divider()
 
--- 保存文件
 Tabs.UISettingsTab:Section({ Title = "保存" })
 
 local fileNameInput = ""
@@ -899,7 +1012,11 @@ Tabs.UISettingsTab:Button({
     Title = "保存文件",
     Callback = function()
         if fileNameInput ~= "" then
-            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
+            SaveFile(fileNameInput, { 
+                Transparent = WindUI:GetTransparency(), 
+                Theme = WindUI:GetCurrentTheme(),
+                OutlineScheme = currentOutlineScheme
+            })
             WindUI:Notify({
                 Title = "保存成功",
                 Content = "配置已保存到 " .. fileNameInput .. ".json",
@@ -912,7 +1029,6 @@ Tabs.UISettingsTab:Button({
 
 Tabs.UISettingsTab:Divider()
 
--- 加载文件
 Tabs.UISettingsTab:Section({ Title = "加载" })
 
 local filesDropdown
@@ -938,13 +1054,17 @@ Tabs.UISettingsTab:Button({
                     Content = "加载配置: " .. HttpService:JSONEncode(data),
                     Duration = 5,
                 })
-                if data.Transparent then 
+                if data.Transparent then
                     Window:ToggleTransparency(data.Transparent)
                     ToggleTransparency:SetValue(data.Transparent)
                 end
-                if data.Theme then 
+                if data.Theme then
                     WindUI:SetTheme(data.Theme)
                     themeDropdown:Select(data.Theme)
+                end
+                if data.OutlineScheme and COLOR_SCHEMES[data.OutlineScheme] then
+                    outlineDropdown:Select(data.OutlineScheme)
+                    applyOutlineScheme(data.OutlineScheme)
                 end
             end
         end
@@ -955,35 +1075,34 @@ Tabs.UISettingsTab:Button({
     Title = "覆盖保存",
     Callback = function()
         if fileNameInput ~= "" then
-            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
-            WindUI:Notify({
-                Title = "覆盖成功",
-                Content = "配置已覆盖保存",
-                Duration = 3,
-                Icon = "check"
+            SaveFile(fileNameInput, { 
+                Transparent = WindUI:GetTransparency(), 
+                Theme = WindUI:GetCurrentTheme(),
+                OutlineScheme = currentOutlineScheme
             })
+            
+            WindUI:Notify({
+    Title = "覆盖保存",
+    Content = "配置已覆盖保存",
+    Duration = 3,
+    Icon = "check"
+})
+-- ====== 接上一段，定义轮廓方案应用函数和下拉框 ======
+
+-- 当前选中的轮廓方案名称（默认为第一个）
+local currentOutlineScheme = next(COLOR_SCHEMES)  -- 取第一个方案的键名
+
+-- 应用轮廓方案（将方案的首个颜色设为轮廓颜色）
+local function applyOutlineScheme(schemeName)
+    local scheme = COLOR_SCHEMES[schemeName]
+    if scheme then
+        local keys = scheme.ColorSequence.Keypoints
+        if #keys > 0 then
+            ThemeOutline = keys[1].Value:ToHex()
+            updateTheme()
         end
     end
-})
-
-Tabs.UISettingsTab:Button({
-    Title = "刷新文件列表",
-    Callback = function()
-        filesDropdown:Refresh(ListFiles())
-    end
-})
-
-Tabs.UISettingsTab:Divider()
-
--- 自定义主题
-Tabs.UISettingsTab:Section({ Title = "自定义主题" })
-
-local currentThemeName = WindUI:GetCurrentTheme()
-local themes = WindUI:GetThemes()
-local ThemeAccent = themes[currentThemeName].Accent
-local ThemeOutline = themes[currentThemeName].Outline
-local ThemeText = themes[currentThemeName].Text
-local ThemePlaceholderText = themes[currentThemeName].Placeholder
+end
 
 function updateTheme()
     WindUI:AddTheme({
@@ -1012,13 +1131,31 @@ Tabs.UISettingsTab:Colorpicker({
     end
 })
 
-Tabs.UISettingsTab:Colorpicker({
-    Title = "轮廓颜色",
-    Default = Color3.fromHex(ThemeOutline),
-    Callback = function(color)
-        ThemeOutline = color:ToHex()
+-- 替换轮廓颜色 Colorpicker 为下拉框
+local outlineDropdown = Tabs.UISettingsTab:Dropdown({
+    Title = "轮廓颜色方案",
+    Multi = false,
+    AllowNone = false,
+    Values = {},  -- 稍后填充
+    Callback = function(schemeName)
+        if schemeName then
+            currentOutlineScheme = schemeName
+            applyOutlineScheme(schemeName)
+        end
     end
 })
+-- 填充下拉框选项
+local schemeNames = {}
+for name, _ in pairs(COLOR_SCHEMES) do
+    table.insert(schemeNames, name)
+end
+outlineDropdown:Refresh(schemeNames)
+-- 默认选中第一个方案
+local firstScheme = schemeNames[1]
+if firstScheme then
+    outlineDropdown:Select(firstScheme)
+    applyOutlineScheme(firstScheme)
+end
 
 Tabs.UISettingsTab:Colorpicker({
     Title = "文本颜色",
@@ -1049,11 +1186,10 @@ Tabs.UISettingsTab:Button({
     end
 })
 
--- 窗口关闭回调
+-- ====== 窗口关闭时的清理 ======
 Window:OnClose(function()
     print("UI已关闭")
     
-    -- 清理射线对象
     for _, line in pairs(RayLines) do
         if line then
             line:Remove()
@@ -1061,7 +1197,6 @@ Window:OnClose(function()
     end
     RayLines = {}
     
-    -- 清理射线连接
     for _, connection in pairs(RayConnections) do
         if connection then
             connection:Disconnect()
@@ -1069,7 +1204,6 @@ Window:OnClose(function()
     end
     RayConnections = {}
     
-    -- 清理ESP连接
     for _, connection in pairs(ESPConnections) do
         if connection then
             connection:Disconnect()
@@ -1077,7 +1211,6 @@ Window:OnClose(function()
     end
     ESPConnections = {}
     
-    -- 清理玩家通知连接
     for _, connection in pairs(PlayerJoinLeaveConnections) do
         if connection then
             connection:Disconnect()

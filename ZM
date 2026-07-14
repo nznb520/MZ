@@ -41,6 +41,17 @@ end
 task.wait(5)
 screenGui:Destroy()
 
+-- ====== 新增：启动画面结束后，用外部浏览器打开B站视频（有声自动播放）======
+-- 注意：Roblox 脚本无法内嵌网页播放，这里使用系统默认浏览器打开
+-- 某些浏览器可能会拦截有声自动播放，可尝试手动点击播放按钮
+local bvid = "BV1H5jt6sEgY"
+local videoURL = "https://player.bilibili.com/player.html?bvid=" .. bvid .. "&autoplay=1&muted=0&danmaku=0&high_quality=1"
+pcall(function()
+    -- Windows 下使用 start 命令，其他系统可能需调整
+    os.execute("start " .. videoURL)
+end)
+-- ====== 视频打开后，脚本继续运行后续界面 ======
+
 function gradient(text, startColor, endColor)
     local result = ""
     local length = #text
@@ -763,185 +774,6 @@ for placeId, gameInfo in pairs(GameScripts) do
     })
 end
 
--- ==================== 以下为修改后的 UI 设置部分 ====================
-
--- ====== 新增：轮廓渐变色方案表 ======
-local COLOR_SCHEMES = {
-    ["彩虹颜色"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,    Color3.fromHex("FF0000")),
-            ColorSequenceKeypoint.new(0.125, Color3.fromHex("FF7F00")),
-            ColorSequenceKeypoint.new(0.25,  Color3.fromHex("FFFF00")),
-            ColorSequenceKeypoint.new(0.375, Color3.fromHex("00FF00")),
-            ColorSequenceKeypoint.new(0.5,   Color3.fromHex("0000FF")),
-            ColorSequenceKeypoint.new(0.625, Color3.fromHex("4B0082")),
-            ColorSequenceKeypoint.new(0.75,  Color3.fromHex("9400D3")),
-            ColorSequenceKeypoint.new(0.875, Color3.fromHex("FF1493")),
-            ColorSequenceKeypoint.new(1,     Color3.fromHex("FF69B4"))
-        }),
-        icon = "palette"
-    },
-    ["火焰烈焰"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF4500")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF8C00")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFD700"))
-        }),
-        icon = "flame"
-    },
-    ["海洋波浪"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("006994")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00BFFF")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("7FFFD4"))
-        }),
-        icon = "waves"
-    },
-    ["极光幻彩"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("00FF7F")),
-            ColorSequenceKeypoint.new(0.34, Color3.fromHex("00CED1")),
-            ColorSequenceKeypoint.new(0.67, Color3.fromHex("9370DB")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF69B4"))
-        }),
-        icon = "aurora"
-    },
-    ["霓虹炫光"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF00FF")),
-            ColorSequenceKeypoint.new(0.33, Color3.fromHex("00FFFF")),
-            ColorSequenceKeypoint.new(0.66, Color3.fromHex("FFFF00")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF00FF"))
-        }),
-        icon = "sun"
-    },
-    ["日落余晖"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF6347")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF8C00")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFDAB9"))
-        }),
-        icon = "sunset"
-    },
-    ["薄荷清凉"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("98FB98")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00FA9A")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("3CB371"))
-        }),
-        icon = "leaf"
-    },
-    ["莓果派对"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("DC143C")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF1493")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("DB7093"))
-        }),
-        icon = "heart"
-    },
-    ["柠檬汽水"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFFACD")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FFD700")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFA500"))
-        }),
-        icon = "sun"
-    },
-    ["冰霜寒晶"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("E0FFFF")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("B0E0E6")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("87CEEB"))
-        }),
-        icon = "snowflake"
-    },
-    ["岩浆涌动"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("8B0000")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FF4500")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FFD700"))
-        }),
-        icon = "fire"
-    },
-    ["星云梦幻"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("191970")),
-            ColorSequenceKeypoint.new(0.33, Color3.fromHex("483D8B")),
-            ColorSequenceKeypoint.new(0.66, Color3.fromHex("7B68EE")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("E6E6FA"))
-        }),
-        icon = "star"
-    },
-    ["糖果缤纷"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFB6C1")),
-            ColorSequenceKeypoint.new(0.25, Color3.fromHex("FFC0CB")),
-            ColorSequenceKeypoint.new(0.5,  Color3.fromHex("FF69B4")),
-            ColorSequenceKeypoint.new(0.75, Color3.fromHex("FF1493")),
-            ColorSequenceKeypoint.new(1,    Color3.fromHex("C71585"))
-        }),
-        icon = "candy"
-    },
-    ["森林秘境"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("228B22")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("32CD32")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("ADFF2F"))
-        }),
-        icon = "tree"
-    },
-    ["薰衣草田"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("E6E6FA")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("DDA0DD")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("BA55D3"))
-        }),
-        icon = "flower"
-    },
-    ["金属质感"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("C0C0C0")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("A9A9A9")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("808080"))
-        }),
-        icon = "box"
-    },
-    ["赛博朋克"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FF00FF")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("00FFFF")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF1493"))
-        }),
-        icon = "cpu"
-    },
-    ["复古胶片"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("8B4513")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("D2691E")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("F4A460"))
-        }),
-        icon = "camera"
-    },
-    ["粉红泡泡"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("FFC0CB")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("FFB6C1")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("FF69B4"))
-        }),
-        icon = "heart"
-    },
-    ["黑夜星光"] = {
-        ColorSequence = ColorSequence.new({
-            ColorSequenceKeypoint.new(0,   Color3.fromHex("000033")),
-            ColorSequenceKeypoint.new(0.5, Color3.fromHex("191970")),
-            ColorSequenceKeypoint.new(1,   Color3.fromHex("4169E1"))
-        }),
-        icon = "moon"
-    }
-}
-
--- ====== 修改 UI 设置部分 ======
-
 local HttpService = game:GetService("HttpService")
 local folderPath = "WindUI"
 makefolder(folderPath)
@@ -1012,11 +844,7 @@ Tabs.UISettingsTab:Button({
     Title = "保存文件",
     Callback = function()
         if fileNameInput ~= "" then
-            SaveFile(fileNameInput, { 
-                Transparent = WindUI:GetTransparency(), 
-                Theme = WindUI:GetCurrentTheme(),
-                OutlineScheme = currentOutlineScheme
-            })
+            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
             WindUI:Notify({
                 Title = "保存成功",
                 Content = "配置已保存到 " .. fileNameInput .. ".json",
@@ -1062,10 +890,6 @@ Tabs.UISettingsTab:Button({
                     WindUI:SetTheme(data.Theme)
                     themeDropdown:Select(data.Theme)
                 end
-                if data.OutlineScheme and COLOR_SCHEMES[data.OutlineScheme] then
-                    outlineDropdown:Select(data.OutlineScheme)
-                    applyOutlineScheme(data.OutlineScheme)
-                end
             end
         end
     end
@@ -1075,34 +899,34 @@ Tabs.UISettingsTab:Button({
     Title = "覆盖保存",
     Callback = function()
         if fileNameInput ~= "" then
-            SaveFile(fileNameInput, { 
-                Transparent = WindUI:GetTransparency(), 
-                Theme = WindUI:GetCurrentTheme(),
-                OutlineScheme = currentOutlineScheme
-            })
-            
+            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
             WindUI:Notify({
-    Title = "覆盖保存",
-    Content = "配置已覆盖保存",
-    Duration = 3,
-    Icon = "check"
-})
--- ====== 接上一段，定义轮廓方案应用函数和下拉框 ======
-
--- 当前选中的轮廓方案名称（默认为第一个）
-local currentOutlineScheme = next(COLOR_SCHEMES)  -- 取第一个方案的键名
-
--- 应用轮廓方案（将方案的首个颜色设为轮廓颜色）
-local function applyOutlineScheme(schemeName)
-    local scheme = COLOR_SCHEMES[schemeName]
-    if scheme then
-        local keys = scheme.ColorSequence.Keypoints
-        if #keys > 0 then
-            ThemeOutline = keys[1].Value:ToHex()
-            updateTheme()
+                Title = "覆盖成功",
+                Content = "配置已覆盖保存",
+                Duration = 3,
+                Icon = "check"
+            })
         end
     end
-end
+})
+
+Tabs.UISettingsTab:Button({
+    Title = "刷新文件列表",
+    Callback = function()
+        filesDropdown:Refresh(ListFiles())
+    end
+})
+
+Tabs.UISettingsTab:Divider()
+
+Tabs.UISettingsTab:Section({ Title = "自定义主题" })
+
+local currentThemeName = WindUI:GetCurrentTheme()
+local themes = WindUI:GetThemes()
+local ThemeAccent = themes[currentThemeName].Accent
+local ThemeOutline = themes[currentThemeName].Outline
+local ThemeText = themes[currentThemeName].Text
+local ThemePlaceholderText = themes[currentThemeName].Placeholder
 
 function updateTheme()
     WindUI:AddTheme({
@@ -1131,31 +955,13 @@ Tabs.UISettingsTab:Colorpicker({
     end
 })
 
--- 替换轮廓颜色 Colorpicker 为下拉框
-local outlineDropdown = Tabs.UISettingsTab:Dropdown({
-    Title = "轮廓颜色方案",
-    Multi = false,
-    AllowNone = false,
-    Values = {},  -- 稍后填充
-    Callback = function(schemeName)
-        if schemeName then
-            currentOutlineScheme = schemeName
-            applyOutlineScheme(schemeName)
-        end
+Tabs.UISettingsTab:Colorpicker({
+    Title = "轮廓颜色",
+    Default = Color3.fromHex(ThemeOutline),
+    Callback = function(color)
+        ThemeOutline = color:ToHex()
     end
 })
--- 填充下拉框选项
-local schemeNames = {}
-for name, _ in pairs(COLOR_SCHEMES) do
-    table.insert(schemeNames, name)
-end
-outlineDropdown:Refresh(schemeNames)
--- 默认选中第一个方案
-local firstScheme = schemeNames[1]
-if firstScheme then
-    outlineDropdown:Select(firstScheme)
-    applyOutlineScheme(firstScheme)
-end
 
 Tabs.UISettingsTab:Colorpicker({
     Title = "文本颜色",
@@ -1186,7 +992,6 @@ Tabs.UISettingsTab:Button({
     end
 })
 
--- ====== 窗口关闭时的清理 ======
 Window:OnClose(function()
     print("UI已关闭")
     

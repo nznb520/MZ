@@ -2,7 +2,7 @@
 -- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- ====== 新增：透明启动画面（逐字显示）======
+-- ====== 修改：启动画面（先显示圆角图片，5秒后图片上移并逐字显示文字）======
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "StartupScreen"
 screenGui.IgnoreGuiInset = true
@@ -13,6 +13,7 @@ frame.Size = UDim2.new(1, 0, 1, 0)
 frame.BackgroundTransparency = 1
 frame.Parent = screenGui
 
+-- 图片（带圆角）
 local avatar = Instance.new("ImageLabel")
 avatar.Image = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg"
 avatar.Size = UDim2.new(0, 220, 0, 220)
@@ -20,6 +21,11 @@ avatar.Position = UDim2.new(0.5, -110, 0.35, -110)
 avatar.BackgroundTransparency = 1
 avatar.Parent = frame
 
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 20)    -- 圆角半径 20
+corner.Parent = avatar
+
+-- 文字标签（初始为空）
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(0, 500, 0, 70)
 textLabel.Position = UDim2.new(0.5, -250, 0.65, 0)
@@ -32,16 +38,28 @@ textLabel.TextStrokeTransparency = 0
 textLabel.TextStrokeColor3 = Color3.new(1, 1, 1)
 textLabel.Parent = frame
 
+-- 先显示图片 5 秒
+task.wait(5)
+
+-- 图片缓慢向上移动
+local TweenService = game:GetService("TweenService")
+local goal = { Position = UDim2.new(0.5, -110, 0.15, -110) }   -- 向上移动
+local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local tween = TweenService:Create(avatar, tweenInfo, goal)
+tween:Play()
+
+-- 同时开始逐字显示文字
 local fullText = "【系统】欢迎使用mz脚本中心"
 for i = 1, #fullText do
     textLabel.Text = string.sub(fullText, 1, i)
     task.wait(0.12)
 end
 
-task.wait(5)
+-- 显示完毕后等待 3 秒再关闭
+task.wait(3)
 screenGui:Destroy()
 
--- ====== 新增：全屏视频播放（自动播放，无进度条，横屏）======
+-- ====== 视频弹窗（不变）======
 local function ShowVideoPopup()
     local videoGui = Instance.new("ScreenGui")
     videoGui.Name = "VideoPopup"
@@ -162,6 +180,7 @@ end
 task.wait(0.5)
 ShowVideoPopup()
 
+-- 以下代码（gradient函数、Popup、主窗口创建、所有功能）完全保持不变
 function gradient(text, startColor, endColor)
     local result = ""
     local length = #text
@@ -225,7 +244,6 @@ local Window = WindUI:CreateWindow({
     Folder = "MZ脚本中心",
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,      -- 保持透明背景，让图片显示
-    -- ====== 新增：主窗口背景图片 ======
     Background = "https://raw.githubusercontent.com/XxwanhexxX/UN/main/%E7%94%98%E5%9F%8E.png",
     BackgroundImageTransparency = 0.5,
     Theme = "Dark",

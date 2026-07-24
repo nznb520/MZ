@@ -96,17 +96,13 @@ local function ShowVideoPopup()
             </html>
         ]]
         local webViewInstance = webView(html, 0, 0, 0, 0) -- 参数可能因注入器而异
-        -- 可能需要设置位置和大小，此处假设 webView 默认占满屏幕
-        -- 一些注入器使用 web_view:SetSize 等，这里先简单处理
         webViewInstance.Parent = mainFrame
-        -- 尝试设置尺寸
         if webViewInstance.Size then
             webViewInstance.Size = UDim2.new(1, 0, 1, 0)
         end
         if webViewInstance.Position then
             webViewInstance.Position = UDim2.new(0, 0, 0, 0)
         end
-        -- 保存引用以便关闭
         videoGui.WebView = webViewInstance
 
         -- 添加关闭按钮（右上角）
@@ -130,46 +126,35 @@ local function ShowVideoPopup()
             end
         end)
     else
-        -- 不支持 WebView，则使用普通 GUI 显示提示并打开浏览器
-        local hintFrame = Instance.new("Frame")
-        hintFrame.Size = UDim2.new(1, 0, 1, 0)
-        hintFrame.BackgroundTransparency = 0.8
-        hintFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-        hintFrame.Parent = mainFrame
-
-        local hintLabel = Instance.new("TextLabel")
-        hintLabel.Size = UDim2.new(0.8, 0, 0.5, 0)
-        hintLabel.Position = UDim2.new(0.1, 0, 0.25, 0)
-        hintLabel.BackgroundTransparency = 1
-        hintLabel.Text = "您的注入器不支持 WebView，\n视频将在浏览器中打开。"
-        hintLabel.TextColor3 = Color3.new(1, 1, 1)
-        hintLabel.TextScaled = true
-        hintLabel.Font = Enum.Font.SourceSansBold
-        hintLabel.Parent = mainFrame
-
-        local closeBtn2 = Instance.new("TextButton")
-        closeBtn2.Size = UDim2.new(0, 150, 0, 50)
-        closeBtn2.Position = UDim2.new(0.5, -75, 0.7, 0)
-        closeBtn2.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
-        closeBtn2.BorderSizePixel = 0
-        closeBtn2.Text = "打开视频并关闭此窗口"
-        closeBtn2.TextColor3 = Color3.new(1, 1, 1)
-        closeBtn2.Font = Enum.Font.SourceSansBold
-        closeBtn2.TextScaled = true
-        closeBtn2.Parent = mainFrame
-
-        closeBtn2.MouseButton1Click:Connect(function()
-            -- 在浏览器中打开视频
-            if syn and syn.open_url then
-                syn.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
-            elseif open_url then
-                open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+        -- ============ 方案一修改区域：不支持 WebView 时自动打开并关闭窗口 ============
+        -- 既然不支持 WebView，直接尝试用浏览器打开视频，并自动关闭此窗口
+        if syn and syn.open_url then
+            syn.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+        elseif open_url then
+            open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+        elseif shared and shared.open_url then
+            shared.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+        else
+            -- 如果连打开浏览器都不支持，那就把链接复制到剪贴板
+            if setclipboard then
+                setclipboard("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+                WindUI:Notify({
+                    Title = "提示",
+                    Content = "无法打开浏览器，视频链接已复制到剪贴板",
+                    Duration = 5,
+                    Icon = "clipboard"
+                })
             else
-                -- 使用 Roblox 的 HttpService 打开（可能不支持）
-                game:HttpGet("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
+                WindUI:Notify({
+                    Title = "提示",
+                    Content = "注入器不支持任何打开网页或复制链接的方式，视频链接: https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4",
+                    Duration = 10,
+                    Icon = "alert"
+                })
             end
-            videoGui:Destroy()
-        end)
+        end
+        videoGui:Destroy() -- 自动销毁这个提示窗口
+        -- ========================================================================
     end
 end
 
@@ -614,6 +599,33 @@ Tabs.DevsTab:Paragraph({
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
     Thumbnail = "https://i.ibb.co/NgTqH1gS/Image-1776255823756-537.jpg",
+    ThumbnailSize = 120,
+})
+
+Tabs.DevsTab:Paragraph({
+    Title = "社会",
+    Desc = "纪律委员",
+    Image = "rbxassetid://129260712070622",
+    ImageSize = 42,
+    Thumbnail = "https://i.ibb.co/0y311R44/Image-1784903636065-359.jpg",
+    ThumbnailSize = 120,
+})  
+
+Tabs.DevsTab:Paragraph({
+    Title = "阿列克谢彼得罗夫",
+    Desc = "墨龙凌霄团员",
+    Image = "rbxassetid://129260712070622",
+    ImageSize = 42,
+    Thumbnail = "https://i.ibb.co/RGRRNDPW/Image-1784903539588-166.jpg",
+    ThumbnailSize = 120,
+})
+
+Tabs.DevsTab:Paragraph({
+    Title = "川溜",
+    Desc = "墨龙凌霄3分队队长",
+    Image = "rbxassetid://129260712070622",
+    ImageSize = 42,
+    Thumbnail = "https://i.ibb.co/FLzdKrkg/Image-1784903725966-803.jpg",
     ThumbnailSize = 120,
 })
 

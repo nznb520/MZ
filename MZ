@@ -2,44 +2,29 @@
 -- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- ====== 全新启动画面：圆角图片 + 背景模糊 + 上移动画 + 逐字文字 ======
+-- ====== 启动画面：纯文字逐字显示 + 每字音效 ======
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "StartupScreen"
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = game.CoreGui
 
--- 背景模糊层（半透明黑色 + 背景图片）
+-- 全屏黑色背景
 local bgFrame = Instance.new("Frame")
 bgFrame.Size = UDim2.new(1, 0, 1, 0)
 bgFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-bgFrame.BackgroundTransparency = 0.5
+bgFrame.BackgroundTransparency = 0
 bgFrame.Parent = screenGui
 
--- 背景纹理（同一张图作为背景，低透明度营造模糊感）
-local bgImage = Instance.new("ImageLabel")
-bgImage.Size = UDim2.new(1, 0, 1, 0)
-bgImage.BackgroundTransparency = 1
-bgImage.Image = "https://raw.githubusercontent.com/nznb520/nznb/main/52368421279078078101783766561675_1783766633276edit.jpg"
-bgImage.ImageTransparency = 0.7
-bgImage.ScaleType = Enum.ScaleType.Crop
-bgImage.Parent = bgFrame
+-- 打字音效（每出现一个字播放一次）
+local typeSound = Instance.new("Sound")
+typeSound.SoundId = "https://raw.githubusercontent.com/nznb520/nanzhunb666/main/%E9%94%AE%E7%9B%98.mp3"
+typeSound.Volume = 1
+typeSound.Parent = screenGui
 
--- 中心清晰图片（圆角，初始居中）
-local centerImage = Instance.new("ImageLabel")
-centerImage.Size = UDim2.new(0, 280, 0, 280)
-centerImage.Position = UDim2.new(0.5, -140, 0.4, -140) -- 居中偏上
-centerImage.BackgroundTransparency = 1
-centerImage.Image = "https://raw.githubusercontent.com/nznb520/nznb/main/52368421279078078101783766561675_1783766633276edit.jpg"
-centerImage.ScaleType = Enum.ScaleType.Fit
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 24) -- 大圆角
-corner.Parent = centerImage
-centerImage.Parent = screenGui
-
--- 逐字显示文字（初始透明）
+-- 逐字显示文字
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(0, 500, 0, 70)
-textLabel.Position = UDim2.new(0.5, -250, 0.7, 0) -- 位于图片下方
+textLabel.Position = UDim2.new(0.5, -250, 0.5, -35) -- 屏幕正中
 textLabel.BackgroundTransparency = 1
 textLabel.Text = ""
 textLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
@@ -50,39 +35,24 @@ textLabel.TextStrokeColor3 = Color3.new(1, 1, 1)
 textLabel.TextTransparency = 1
 textLabel.Parent = screenGui
 
--- 等待5秒（展示图片）
-task.wait(5)
-
--- 图片向上移动动画（使用TweenService）
-local TweenService = game:GetService("TweenService")
-local tweenInfo = TweenInfo.new(1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local targetPos = UDim2.new(0.5, -140, 0.22, -140) -- 上移
-local moveTween = TweenService:Create(centerImage, tweenInfo, {Position = targetPos})
-moveTween:Play()
-
--- 背景淡出（透明度逐渐增加）
-local fadeTweenInfo = TweenInfo.new(1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local bgFrameTween = TweenService:Create(bgFrame, fadeTweenInfo, {BackgroundTransparency = 0.9})
-bgFrameTween:Play()
-local bgImageTween = TweenService:Create(bgImage, fadeTweenInfo, {ImageTransparency = 1})
-bgImageTween:Play()
-
--- 等待动画完成
-task.wait(2)
-
--- 逐字显示文本
+-- 显示文字（从透明到显现）
 textLabel.TextTransparency = 0
 local fullText = "【系统】欢迎使用mz脚本中心"
 for i = 1, #fullText do
     textLabel.Text = string.sub(fullText, 1, i)
+    -- 播放一个字的音效
+    pcall(function()
+        typeSound.TimePosition = 0
+        typeSound:Play()
+    end)
     task.wait(0.12)
 end
 
--- 再停留2秒后关闭启动画面
+-- 停留2秒后关闭启动画面
 task.wait(2)
 screenGui:Destroy()
 
--- ====== 新增：全屏视频播放（自动播放，无进度条，横屏）======
+-- ====== 视频弹窗（原功能保留） ======
 local function ShowVideoPopup()
     local videoGui = Instance.new("ScreenGui")
     videoGui.Name = "VideoPopup"
@@ -95,7 +65,7 @@ local function ShowVideoPopup()
     mainFrame.BackgroundTransparency = 0
     mainFrame.Parent = videoGui
 
-    -- 尝试使用 WebView（适用于 Synapse X、Krnl 等支持 WebView 的注入器）
+    -- 尝试使用 WebView（适用于支持 WebView 的注入器）
     local webView = nil
     local webViewSupported = false
 
@@ -639,7 +609,7 @@ Tabs.DevsTab:Paragraph({
     Desc = "纪律委员",
     Image = "rbxassetid://129260712070622",
     ImageSize = 42,
-    Thumbnail = "https://i.ibb.co/0y311R44/Image-1784903636065-359.jpg",
+    Thumbnail = "https://i.ibb.co/XZvR4jLg/Image-1784903636065-359.jpg",
     ThumbnailSize = 120,
 })  
 

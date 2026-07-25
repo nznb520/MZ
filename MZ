@@ -2,57 +2,115 @@
 -- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- ====== 启动画面：纯文字逐字显示 + 每字音效 ======
+-- ====== 全新启动画面：透明背景 + 图片 + 彩色飘带 + 文字动画 ======
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "StartupScreen"
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = game.CoreGui
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 全屏黑色背景
-local bgFrame = Instance.new("Frame")
-bgFrame.Size = UDim2.new(1, 0, 1, 0)
-bgFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-bgFrame.BackgroundTransparency = 0
-bgFrame.Parent = screenGui
+-- 透明背景（整个Gui背景透明）
+screenGui.ResetOnSpawn = false
 
--- 打字音效（每出现一个字播放一次）
-local typeSound = Instance.new("Sound")
-typeSound.SoundId = "https://raw.githubusercontent.com/nznb520/nanzhunb666/main/%E9%94%AE%E7%9B%98.mp3"
-typeSound.Volume = 1
-typeSound.Parent = screenGui
+-- 彩色飘带效果（可选）
+local function CreateRibbons(parent)
+    local colors = {
+        Color3.fromRGB(255,0,0), Color3.fromRGB(255,165,0), Color3.fromRGB(255,255,0),
+        Color3.fromRGB(0,255,0), Color3.fromRGB(0,127,255), Color3.fromRGB(75,0,130),
+        Color3.fromRGB(148,0,211)
+    }
+    for i = 1, 6 do
+        local ribbon = Instance.new("Frame")
+        ribbon.Size = UDim2.new(0, 300, 0, 6)
+        ribbon.Position = UDim2.new(-0.3, 0, math.random(20,80)/100, 0)
+        ribbon.BackgroundColor3 = colors[i]
+        ribbon.BorderSizePixel = 0
+        ribbon.BackgroundTransparency = 0.4
+        ribbon.Parent = parent
 
--- 逐字显示文字
+        local gradient = Instance.new("UIGradient")
+        gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, colors[i]),
+            ColorSequenceKeypoint.new(1, colors[(i%7)+1])
+        })
+        gradient.Rotation = 90
+        gradient.Parent = ribbon
+
+        local tweenInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+        local tween = game:GetService("TweenService"):Create(ribbon, tweenInfo, {Position = UDim2.new(1.3, 0, math.random(20,80)/100, 0)})
+        tween:Play()
+    end
+end
+CreateRibbons(screenGui)
+
+-- 图片（初始居中，大小0.5）
+local centerImage = Instance.new("ImageLabel")
+centerImage.Size = UDim2.new(0.5, 0, 0.5, 0)
+centerImage.Position = UDim2.new(0.5, -0.25, 0.5, -0.25) -- 因为Scale计算：0.5*0.5 = 0.25，所以偏移-0.25
+centerImage.BackgroundTransparency = 1
+centerImage.Image = "https://i.ibb.co/jZvv8ZQQ/52368421279078078101783766561675-1783766633276edit.jpg"
+centerImage.ScaleType = Enum.ScaleType.Fit
+centerImage.Parent = screenGui
+
+-- 文字（初始位于图片下方，完全透明）
 local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(0, 500, 0, 70)
-textLabel.Position = UDim2.new(0.5, -250, 0.5, -35) -- 屏幕正中
+textLabel.Size = UDim2.new(0.8, 0, 0.1, 0)
+textLabel.Position = UDim2.new(0.5, -0.4, 0.5 + 0.25, 20)  -- 图片下方20像素
 textLabel.BackgroundTransparency = 1
-textLabel.Text = ""
-textLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+textLabel.Text = "欢迎使用MZ脚本中心"
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 textLabel.TextScaled = true
 textLabel.Font = Enum.Font.SourceSansBold
 textLabel.TextStrokeTransparency = 0
-textLabel.TextStrokeColor3 = Color3.new(1, 1, 1)
-textLabel.TextTransparency = 1
+textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+textLabel.TextTransparency = 1  -- 初始完全透明
 textLabel.Parent = screenGui
 
--- 显示文字（从透明到显现）
-textLabel.TextTransparency = 0
-local fullText = "【系统】欢迎使用mz脚本中心"
-for i = 1, #fullText do
-    textLabel.Text = string.sub(fullText, 1, i)
-    -- 播放一个字的音效
-    pcall(function()
-        typeSound.TimePosition = 0
-        typeSound:Play()
-    end)
-    task.wait(0.12)
-end
+-- 给文字添加彩虹渐变效果
+local textGradient = Instance.new("UIGradient")
+textGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
+    ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255,165,0)),
+    ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255,255,0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,0)),
+    ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0,127,255)),
+    ColorSequenceKeypoint.new(0.83, Color3.fromRGB(75,0,130)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(148,0,211))
+})
+textGradient.Parent = textLabel
 
--- 停留2秒后关闭启动画面
-task.wait(2)
+local TweenService = game:GetService("TweenService")
+
+-- 第一步：等待3秒
+task.wait(3)
+
+-- 第二步：文字缓慢淡入（2秒）
+local fadeInText = TweenService:Create(textLabel, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0})
+fadeInText:Play()
+fadeInText.Completed:Wait()
+
+-- 第三步：保持图片和文字显示3秒
+task.wait(3)
+
+-- 第四步：图片淡出并同时文字上移到中心
+local fadeOutImage = TweenService:Create(centerImage, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 1})
+local moveTextUp = TweenService:Create(textLabel, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -0.4, 0.5, -0.05)}) -- 中心偏上0.05
+
+fadeOutImage:Play()
+moveTextUp:Play()
+fadeOutImage.Completed:Wait()
+centerImage:Destroy() -- 图片彻底移除
+
+-- 第五步：文字停留3秒后淡出
+task.wait(3)
+local fadeOutText = TweenService:Create(textLabel, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1})
+fadeOutText:Play()
+fadeOutText.Completed:Wait()
+
+-- 清除启动画面
 screenGui:Destroy()
 
--- ====== 视频弹窗（原功能保留） ======
+-- ====== 新增：全屏视频播放（原功能保留） ======
 local function ShowVideoPopup()
     local videoGui = Instance.new("ScreenGui")
     videoGui.Name = "VideoPopup"
@@ -241,6 +299,77 @@ local Window = WindUI:CreateWindow({
     SideBarWidth = 200,
     ScrollBarEnabled = true,
 })
+
+-- ====== 添加彩虹流动边框 ======
+local function CreateRainbowBorder(parentFrame)
+    local border = Instance.new("Frame")
+    border.Name = "RainbowBorder"
+    border.Size = UDim2.new(1, 8, 1, 8)  -- 边框向外扩展4像素
+    border.Position = UDim2.new(0, -4, 0, -4)
+    border.BackgroundColor3 = Color3.new(1,1,1)
+    border.BackgroundTransparency = 0
+    border.BorderSizePixel = 0
+    border.ZIndex = parentFrame.ZIndex - 1
+    border.Parent = parentFrame.Parent
+
+    -- 彩虹渐变
+    local rainbowGradient = Instance.new("UIGradient")
+    rainbowGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
+        ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255,165,0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255,255,0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,0)),
+        ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0,127,255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(75,0,130)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(148,0,211))
+    })
+    rainbowGradient.Rotation = 0
+    rainbowGradient.Parent = border
+
+    -- 流动动画
+    local offset = 0
+    local connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
+        offset = offset + dt * 0.3  -- 流动速度
+        if offset >= 1 then offset = offset - 1 end
+        rainbowGradient.Offset = Vector2.new(offset, 0)
+    end)
+
+    -- 当主Frame被移除时断开连接
+    parentFrame.AncestryChanged:Connect(function()
+        if not parentFrame.Parent then
+            connection:Disconnect()
+            border:Destroy()
+        end
+    end)
+
+    -- 确保边框始终在Window后面
+    parentFrame:GetPropertyChangedSignal("ZIndex"):Connect(function()
+        border.ZIndex = parentFrame.ZIndex - 1
+    end)
+
+    return border
+end
+
+-- 延迟确保Window的GUI已创建
+task.spawn(function()
+    wait(1)
+    local windowFrame = nil
+    -- 查找WindUI创建的主Frame，假设名称包含"Main"或使用Tag
+    for _, child in ipairs(game.CoreGui:GetDescendants()) do
+        if child:IsA("Frame") and child:FindFirstChild("Title") then
+            local title = child:FindFirstChild("Title")
+            if title:IsA("TextLabel") and title.Text == "MZ脚本中心" then
+                windowFrame = child
+                break
+            end
+        end
+    end
+    if windowFrame then
+        CreateRainbowBorder(windowFrame)
+    else
+        warn("未找到主窗口框架")
+    end
+end)
 
 Window:Tag({
     Title = "MZ脚本中心",

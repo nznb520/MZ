@@ -2,112 +2,82 @@
 -- 主群获取更多T^T1070748130
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- ====== 全新启动画面：透明背景 + 图片 + 彩色飘带 + 文字动画 ======
+-- ====== 全新启动画面：透明背景 + 贴花 + 文字动画 + 背景模糊 ======
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "StartupScreen"
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = game.CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
--- 透明背景（整个Gui背景透明）
 screenGui.ResetOnSpawn = false
 
--- 彩色飘带效果（可选）
-local function CreateRibbons(parent)
-    local colors = {
-        Color3.fromRGB(255,0,0), Color3.fromRGB(255,165,0), Color3.fromRGB(255,255,0),
-        Color3.fromRGB(0,255,0), Color3.fromRGB(0,127,255), Color3.fromRGB(75,0,130),
-        Color3.fromRGB(148,0,211)
-    }
-    for i = 1, 6 do
-        local ribbon = Instance.new("Frame")
-        ribbon.Size = UDim2.new(0, 300, 0, 6)
-        ribbon.Position = UDim2.new(-0.3, 0, math.random(20,80)/100, 0)
-        ribbon.BackgroundColor3 = colors[i]
-        ribbon.BorderSizePixel = 0
-        ribbon.BackgroundTransparency = 0.4
-        ribbon.Parent = parent
+-- 添加游戏画面模糊效果（结束后移除）
+local blurEffect = Instance.new("BlurEffect")
+blurEffect.Size = 8
+blurEffect.Parent = game:GetService("Lighting")
 
-        local gradient = Instance.new("UIGradient")
-        gradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, colors[i]),
-            ColorSequenceKeypoint.new(1, colors[(i%7)+1])
-        })
-        gradient.Rotation = 90
-        gradient.Parent = ribbon
-
-        local tweenInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
-        local tween = game:GetService("TweenService"):Create(ribbon, tweenInfo, {Position = UDim2.new(1.3, 0, math.random(20,80)/100, 0)})
-        tween:Play()
-    end
-end
-CreateRibbons(screenGui)
-
--- 图片（初始居中，大小0.5）
-local centerImage = Instance.new("ImageLabel")
-centerImage.Size = UDim2.new(0.5, 0, 0.5, 0)
-centerImage.Position = UDim2.new(0.5, -0.25, 0.5, -0.25) -- 因为Scale计算：0.5*0.5 = 0.25，所以偏移-0.25
-centerImage.BackgroundTransparency = 1
-centerImage.Image = "https://i.ibb.co/jZvv8ZQQ/52368421279078078101783766561675-1783766633276edit.jpg"
-centerImage.ScaleType = Enum.ScaleType.Fit
-centerImage.Parent = screenGui
-
--- 文字（初始位于图片下方，完全透明）
+-- 文字标签（屏幕中央下方一点）
 local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(0.8, 0, 0.1, 0)
-textLabel.Position = UDim2.new(0.5, -0.4, 0.5 + 0.25, 20)  -- 图片下方20像素
+textLabel.Size = UDim2.new(0.6, 0, 0.1, 0)
+textLabel.Position = UDim2.new(0.5, 0, 0.6, 0)
+textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 textLabel.BackgroundTransparency = 1
 textLabel.Text = "欢迎使用MZ脚本中心"
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextColor3 = Color3.new(1, 1, 1)
 textLabel.TextScaled = true
 textLabel.Font = Enum.Font.SourceSansBold
-textLabel.TextStrokeTransparency = 0
-textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
-textLabel.TextTransparency = 1  -- 初始完全透明
+textLabel.TextTransparency = 1
 textLabel.Parent = screenGui
 
--- 给文字添加彩虹渐变效果
-local textGradient = Instance.new("UIGradient")
-textGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
-    ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255,165,0)),
-    ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255,255,0)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,0)),
-    ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0,127,255)),
-    ColorSequenceKeypoint.new(0.83, Color3.fromRGB(75,0,130)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(148,0,211))
-})
-textGradient.Parent = textLabel
+-- 贴花 ImageLabel（文字上方）
+local decalImage = Instance.new("ImageLabel")
+decalImage.Size = UDim2.new(0, 120, 0, 120)
+decalImage.Position = UDim2.new(0.5, 0, 0.6, -80)  -- 文字上方80像素
+decalImage.AnchorPoint = Vector2.new(0.5, 1)
+decalImage.BackgroundTransparency = 1
+decalImage.Image = "rbxassetid://135570460653406"
+decalImage.ScaleType = Enum.ScaleType.Fit
+decalImage.ImageTransparency = 1
+decalImage.Parent = screenGui
 
 local TweenService = game:GetService("TweenService")
 
--- 第一步：等待3秒
-task.wait(3)
+-- 时间参数
+local textFadeDuration = 0.5
+local decalDelay = 1.5                 -- 文字出现后到贴花出现的时间
+local commonDisplayDuration = 5        -- 贴花出现后与文字共同显示时间
+local decalExtraDuration = decalDelay  -- 文字消失后贴花继续显示的时间（与延迟相同）
 
--- 第二步：文字缓慢淡入（2秒）
-local fadeInText = TweenService:Create(textLabel, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0})
+-- 文字淡入
+local fadeInText = TweenService:Create(textLabel, TweenInfo.new(textFadeDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0})
 fadeInText:Play()
 fadeInText.Completed:Wait()
 
--- 第三步：保持图片和文字显示3秒
-task.wait(3)
+-- 等待延迟后贴花淡入
+task.wait(decalDelay)
+local fadeInDecal = TweenService:Create(decalImage, TweenInfo.new(textFadeDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0})
+fadeInDecal:Play()
+fadeInDecal.Completed:Wait()
 
--- 第四步：图片淡出并同时文字上移到中心
-local fadeOutImage = TweenService:Create(centerImage, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 1})
-local moveTextUp = TweenService:Create(textLabel, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -0.4, 0.5, -0.05)}) -- 中心偏上0.05
+-- 共同显示5秒
+task.wait(commonDisplayDuration)
 
-fadeOutImage:Play()
-moveTextUp:Play()
-fadeOutImage.Completed:Wait()
-centerImage:Destroy() -- 图片彻底移除
-
--- 第五步：文字停留3秒后淡出
-task.wait(3)
-local fadeOutText = TweenService:Create(textLabel, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1})
+-- 文字淡出并销毁
+local fadeOutText = TweenService:Create(textLabel, TweenInfo.new(textFadeDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1})
 fadeOutText:Play()
 fadeOutText.Completed:Wait()
+textLabel:Destroy()
 
--- 清除启动画面
+-- 贴花继续显示一段时间（与延迟相同）
+task.wait(decalExtraDuration)
+
+-- 贴花淡出并销毁
+local fadeOutDecal = TweenService:Create(decalImage, TweenInfo.new(textFadeDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 1})
+fadeOutDecal:Play()
+fadeOutDecal.Completed:Wait()
+decalImage:Destroy()
+
+-- 移除模糊效果并销毁启动画面
+blurEffect:Destroy()
 screenGui:Destroy()
 
 -- ====== 新增：全屏视频播放（原功能保留） ======
@@ -223,26 +193,12 @@ end
 task.wait(0.5)
 ShowVideoPopup()
 
-function gradient(text, startColor, endColor)
-    local result = ""
-    local length = #text
-    for i = 1, length do
-        local t = (i - 1) / math.max(length - 1, 1)
-        local r = math.floor((startColor.R + (endColor.R - startColor.R) * t) * 255)
-        local g = math.floor((startColor.G + (endColor.G - startColor.G) * t) * 255)
-        local b = math.floor((startColor.B + (endColor.B - startColor.B) * t) * 255)
-        local char = text:sub(i, i)
-        result = result .. "<font color=\"rgb(" .. r ..", " .. g .. ", " .. b .. ")\">" .. char .. "</font>"
-    end
-    return result
-end
-
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
     Icon = "https://i.ibb.co/1YtNJxGL/Image-1776560526876-770.jpg",
     IconThemed = true,
-    Content = "欢迎使用MZ脚本中心 " .. gradient("WindUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Library",
+    Content = "欢迎使用MZ脚本中心 WindUI Library",
     Buttons = {
         {
             Title = "Cancel",

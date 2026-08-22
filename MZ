@@ -34,7 +34,7 @@ decalImage.Size = UDim2.new(0, 120, 0, 120)
 decalImage.Position = UDim2.new(0.5, 0, 0.6, -80)  -- 文字上方80像素
 decalImage.AnchorPoint = Vector2.new(0.5, 1)
 decalImage.BackgroundTransparency = 1
-decalImage.Image = "https://i.ibb.co/LzJ82tJx/nanzhu-png.png"
+decalImage.Image = "https://raw.githubusercontent.com/nznb520/MZ/refs/heads/main/%6E%61%6E%7A%68%75%2E%70%6E%67%2E%70%6E%67"
 decalImage.ScaleType = Enum.ScaleType.Fit
 decalImage.ImageTransparency = 1
 decalImage.Parent = screenGui
@@ -80,109 +80,7 @@ decalImage:Destroy()
 blurEffect:Destroy()
 screenGui:Destroy()
 
--- ====== 新增：全屏视频播放（原功能保留） ======
-local function ShowVideoPopup()
-    local videoGui = Instance.new("ScreenGui")
-    videoGui.Name = "VideoPopup"
-    videoGui.IgnoreGuiInset = true
-    videoGui.Parent = game.CoreGui
-
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(1, 0, 1, 0)
-    mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-    mainFrame.BackgroundTransparency = 0
-    mainFrame.Parent = videoGui
-
-    -- 尝试使用 WebView（适用于支持 WebView 的注入器）
-    local webView = nil
-    local webViewSupported = false
-
-    if syn and syn.web_view then
-        webView = syn.web_view
-        webViewSupported = true
-    elseif Krnl and Krnl.web_view then
-        webView = Krnl.web_view
-        webViewSupported = true
-    elseif webview then
-        webView = webview
-        webViewSupported = true
-    end
-
-    if webViewSupported then
-        local videoUrl = "https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4"
-        local html = [[
-            <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-                <style>
-                    body { margin: 0; overflow: hidden; background: black; }
-                    video { width: 100vw; height: 100vh; object-fit: fill; display: block; }
-                </style>
-            </head>
-            <body>
-                <video id="vid" src="]] .. videoUrl .. [[" autoplay muted playsinline></video>
-                <script>
-                    var vid = document.getElementById('vid');
-                    vid.play();
-                    if (vid.requestFullscreen) {
-                        vid.requestFullscreen().catch(()=>{});
-                    }
-                </script>
-            </body>
-            </html>
-        ]]
-        local webViewInstance = webView(html, 0, 0, 0, 0)
-        webViewInstance.Parent = mainFrame
-        if webViewInstance.Size then
-            webViewInstance.Size = UDim2.new(1, 0, 1, 0)
-        end
-        if webViewInstance.Position then
-            webViewInstance.Position = UDim2.new(0, 0, 0, 0)
-        end
-        videoGui.WebView = webViewInstance
-
-        local closeBtn = Instance.new("TextButton")
-        closeBtn.Size = UDim2.new(0, 60, 0, 40)
-        closeBtn.Position = UDim2.new(1, -70, 0, 10)
-        closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        closeBtn.BorderSizePixel = 0
-        closeBtn.Text = "关闭"
-        closeBtn.TextColor3 = Color3.new(1, 1, 1)
-        closeBtn.Font = Enum.Font.SourceSansBold
-        closeBtn.TextScaled = true
-        closeBtn.Parent = mainFrame
-
-        closeBtn.MouseButton1Click:Connect(function()
-            if videoGui then
-                if videoGui.WebView and videoGui.WebView.Destroy then
-                    videoGui.WebView:Destroy()
-                end
-                videoGui:Destroy()
-            end
-        end)
-    else
-        -- 不支持 WebView 时尝试打开浏览器
-        if syn and syn.open_url then
-            syn.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
-        elseif open_url then
-            open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
-        elseif shared and shared.open_url then
-            shared.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
-        else
-            WindUI:Notify({
-                Title = "提示",
-                Content = "注入器不支持打开浏览器，视频链接: https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4",
-                Duration = 10,
-                Icon = "alert"
-            })
-        end
-        videoGui:Destroy()
-    end
-end
-
-task.wait(0.5)
-ShowVideoPopup()
-
+-- ====== 直接进入确认弹窗 ======
 local Confirmed = false
 WindUI:Popup({
     Title = "欢迎使用MZ脚本中心",
@@ -1134,13 +1032,63 @@ Tabs.UISettingsTab:Colorpicker({
     end
 })
 
-Tabs.UISettingsTab:Colorpicker({
-    Title = "轮廓颜色",
-    Default = Color3.fromHex(ThemeOutline),
-    Callback = function(color)
-        ThemeOutline = color:ToHex()
+-- 轮廓颜色下拉框（替换原来的轮廓颜色 Colorpicker）
+local outlineColorMap = {
+    ["红色"] = "#FF0000",
+    ["橙色"] = "#FFA500",
+    ["黄色"] = "#FFFF00",
+    ["绿色"] = "#00FF00",
+    ["蓝色"] = "#0000FF",
+    ["紫色"] = "#800080",
+    ["粉色"] = "#FFC0CB",
+    ["白色"] = "#FFFFFF",
+    ["黑色"] = "#000000",
+    ["青色"] = "#00FFFF",
+    ["灰色"] = "#808080",
+    ["金色"] = "#FFD700"
+}
+
+local outlineColorNames = {}
+for name, _ in pairs(outlineColorMap) do
+    table.insert(outlineColorNames, name)
+end
+table.sort(outlineColorNames)
+
+-- 查找当前轮廓颜色对应的名称
+local function findOutlineColorName(hexColor)
+    hexColor = string.upper(hexColor or "")
+    for name, hex in pairs(outlineColorMap) do
+        if string.upper(hex) == hexColor then
+            return name
+        end
+    end
+    return nil
+end
+
+local outlineDropdown = Tabs.UISettingsTab:Dropdown({
+    Title = "选择轮廓颜色",
+    Multi = false,
+    AllowNone = false,
+    Values = outlineColorNames,
+    Callback = function(colorName)
+        if outlineColorMap[colorName] then
+            ThemeOutline = outlineColorMap[colorName]
+            updateTheme()
+            WindUI:Notify({
+                Title = "轮廓颜色已更新",
+                Content = "当前轮廓颜色: " .. colorName,
+                Duration = 3,
+                Icon = "palette"
+            })
+        end
     end
 })
+
+-- 设置默认选中
+local defaultOutlineName = findOutlineColorName(ThemeOutline)
+if defaultOutlineName then
+    outlineDropdown:Select(defaultOutlineName)
+end
 
 Tabs.UISettingsTab:Colorpicker({
     Title = "文本颜色",

@@ -34,7 +34,7 @@ decalImage.Size = UDim2.new(0, 120, 0, 120)
 decalImage.Position = UDim2.new(0.5, 0, 0.6, -80)  -- 文字上方80像素
 decalImage.AnchorPoint = Vector2.new(0.5, 1)
 decalImage.BackgroundTransparency = 1
-decalImage.Image = "rbxassetid://135570460653406"
+decalImage.Image = "https://i.ibb.co/LzJ82tJx/nanzhu-png.png"
 decalImage.ScaleType = Enum.ScaleType.Fit
 decalImage.ImageTransparency = 1
 decalImage.Parent = screenGui
@@ -161,7 +161,7 @@ local function ShowVideoPopup()
             end
         end)
     else
-        -- 不支持 WebView 时尝试打开浏览器或复制链接
+        -- 不支持 WebView 时尝试打开浏览器
         if syn and syn.open_url then
             syn.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
         elseif open_url then
@@ -169,22 +169,12 @@ local function ShowVideoPopup()
         elseif shared and shared.open_url then
             shared.open_url("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
         else
-            if setclipboard then
-                setclipboard("https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4")
-                WindUI:Notify({
-                    Title = "提示",
-                    Content = "无法打开浏览器，视频链接已复制到剪贴板",
-                    Duration = 5,
-                    Icon = "clipboard"
-                })
-            else
-                WindUI:Notify({
-                    Title = "提示",
-                    Content = "注入器不支持任何打开网页或复制链接的方式，视频链接: https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4",
-                    Duration = 10,
-                    Icon = "alert"
-                })
-            end
+            WindUI:Notify({
+                Title = "提示",
+                Content = "注入器不支持打开浏览器，视频链接: https://cdn.jsdelivr.net/gh/nznb520/nznb@main/VID_20260724_215920.mp4",
+                Duration = 10,
+                Icon = "alert"
+            })
         end
         videoGui:Destroy()
     end
@@ -255,77 +245,6 @@ local Window = WindUI:CreateWindow({
     SideBarWidth = 200,
     ScrollBarEnabled = true,
 })
-
--- ====== 添加彩虹流动边框 ======
-local function CreateRainbowBorder(parentFrame)
-    local border = Instance.new("Frame")
-    border.Name = "RainbowBorder"
-    border.Size = UDim2.new(1, 8, 1, 8)  -- 边框向外扩展4像素
-    border.Position = UDim2.new(0, -4, 0, -4)
-    border.BackgroundColor3 = Color3.new(1,1,1)
-    border.BackgroundTransparency = 0
-    border.BorderSizePixel = 0
-    border.ZIndex = parentFrame.ZIndex - 1
-    border.Parent = parentFrame.Parent
-
-    -- 彩虹渐变
-    local rainbowGradient = Instance.new("UIGradient")
-    rainbowGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,0)),
-        ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255,165,0)),
-        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255,255,0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,0)),
-        ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0,127,255)),
-        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(75,0,130)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(148,0,211))
-    })
-    rainbowGradient.Rotation = 0
-    rainbowGradient.Parent = border
-
-    -- 流动动画
-    local offset = 0
-    local connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
-        offset = offset + dt * 0.3  -- 流动速度
-        if offset >= 1 then offset = offset - 1 end
-        rainbowGradient.Offset = Vector2.new(offset, 0)
-    end)
-
-    -- 当主Frame被移除时断开连接
-    parentFrame.AncestryChanged:Connect(function()
-        if not parentFrame.Parent then
-            connection:Disconnect()
-            border:Destroy()
-        end
-    end)
-
-    -- 确保边框始终在Window后面
-    parentFrame:GetPropertyChangedSignal("ZIndex"):Connect(function()
-        border.ZIndex = parentFrame.ZIndex - 1
-    end)
-
-    return border
-end
-
--- 延迟确保Window的GUI已创建
-task.spawn(function()
-    wait(1)
-    local windowFrame = nil
-    -- 查找WindUI创建的主Frame，假设名称包含"Main"或使用Tag
-    for _, child in ipairs(game.CoreGui:GetDescendants()) do
-        if child:IsA("Frame") and child:FindFirstChild("Title") then
-            local title = child:FindFirstChild("Title")
-            if title:IsA("TextLabel") and title.Text == "MZ脚本中心" then
-                windowFrame = child
-                break
-            end
-        end
-    end
-    if windowFrame then
-        CreateRainbowBorder(windowFrame)
-    else
-        warn("未找到主窗口框架")
-    end
-end)
 
 Window:Tag({
     Title = "MZ脚本中心",
@@ -425,6 +344,39 @@ Tabs.InfoTab:Paragraph({
     ImageSize = 42,
     Thumbnail = "https://i.ibb.co/Hw908R6/Image-1776485613816-44.jpg",
     ThumbnailSize = 120,
+})
+
+-- 复制按钮
+Tabs.InfoTab:Divider()
+
+Tabs.InfoTab:Button({
+    Title = "复制【墨龙‖凌霄】军团审核群QQ🐧群号",
+    Desc = "点击复制群号 1051730153",
+    Icon = "clipboard",
+    Callback = function()
+        setclipboard("1051730153")
+        WindUI:Notify({
+            Title = "复制成功",
+            Content = "已复制群号：1051730153",
+            Duration = 3,
+            Icon = "clipboard"
+        })
+    end
+})
+
+Tabs.InfoTab:Button({
+    Title = "复制【墨龙‖凌霄】军团分团审核群QQ🐧群号",
+    Desc = "点击复制群号 984492273",
+    Icon = "clipboard",
+    Callback = function()
+        setclipboard("984492273")
+        WindUI:Notify({
+            Title = "复制成功",
+            Content = "已复制群号：984492273",
+            Duration = 3,
+            Icon = "clipboard"
+        })
+    end
 })
 
 Tabs.GeneralTab:Button({
